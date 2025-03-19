@@ -1,0 +1,73 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Unity.Properties;
+
+namespace Unity.Behavior
+{
+    [Serializable, GeneratePropertyBag]
+    [NodeDescription(
+        name: "Switch",
+        description: "Branches off based on enum value.", 
+        icon: "Icons/Sequence",
+        category: "Flow/Conditional",
+        id: "ef072beedcccd16ac0cd3cb5295fe4cd")]
+    internal partial class SwitchComposite : Composite
+    {
+        // The returned status when no node is attached to the desired port.
+        internal Status DefaultStatus = Status.Success;
+
+        [SerializeReference] public BlackboardVariable EnumVariable;
+        [CreateProperty]
+        private int m_CurrentChild = -1;
+
+        /// <inheritdoc cref="OnStart" />
+        protected override Status OnStart()
+        {
+            if (Children.Count == 0)
+            {
+                return Status.Success;
+            }
+
+            m_CurrentChild = Array.IndexOf(Enum.GetValues(EnumVariable.ObjectValue.GetType()), EnumVariable.ObjectValue);
+
+            if (m_CurrentChild >= Children.Count || m_CurrentChild < 0)
+            {
+                return DefaultStatus;
+            }
+
+            Node child = Children[m_CurrentChild];
+            if (child == null)
+            {
+                return DefaultStatus;
+            }
+
+            Status status = StartNode(child);
+            return status switch
+            {
+                Status.Success => Status.Success,
+                Status.Failure => Status.Failure,
+                _ => Status.Waiting
+            };
+        }
+
+        /// <inheritdoc cref="OnUpdate" />
+        protected override Status OnUpdate()
+        {
+            return Children[m_CurrentChild].CurrentStatus;
+        }
+
+        /// <inheritdoc cref="ResetStatus" />
+        public override void ResetStatus()
+        {
+            CurrentStatus = Status.Uninitialized;
+            foreach (var child in NullFreeChildren())
+            {
+                child.ResetStatus();
+            }
+        }
+
+        private IEnumerable<Node> NullFreeChildren() => Children.Where(child => child != null);
+    }
+}
