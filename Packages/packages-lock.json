@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.kittens.behavior": {
-      "version": "file:com.unity.behavior",
+      "version": "file:com.kittens.behavior",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
