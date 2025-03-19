@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/Transform",
         description: "Sets the transform's scale to a specific value, with an optional duration to scale over time.",
         id: "31e76f9a2f18ec898c84367943358f2b")]
-    internal partial class SetScaleAction : Action
+    public partial class SetScaleAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Vector3> ScaleValue = new BlackboardVariable<Vector3>(Vector3.one);

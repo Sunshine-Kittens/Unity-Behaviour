@@ -14,10 +14,10 @@ namespace Unity.Behavior
         story: "When a message is received on [ChannelVariable]",
         description: "Starts the subgraph upon receiving an event message.",
         id: "a90ecb9b9ff9932eb96f04424549494c")]
-    internal partial class StartOnEvent : Modifier
+    public partial class StartOnEvent : Modifier
     {
         [Serializable]
-        internal enum TriggerBehavior
+        public enum TriggerBehavior
         {
             Default,
             Restart,
@@ -35,10 +35,10 @@ namespace Unity.Behavior
         /// The variables sent with the event message.
         /// </summary>
         [SerializeReference]
-        internal BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
+        public BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
 
         [SerializeField]
-        internal TriggerBehavior Mode = TriggerBehavior.Default;
+        public TriggerBehavior Mode = TriggerBehavior.Default;
         private Delegate m_CaptureVariablesDelegate;
         private EventChannelBase m_CurrentChannel;
         [CreateProperty]

@@ -13,10 +13,10 @@ namespace Unity.Behavior
         category: "Flow",
         icon: "Icons/repeater",
         id: "ae70eb7a112b4b339e1699ebc246f1c4")]
-    internal partial class RepeaterModifier : Modifier
+    public partial class RepeaterModifier : Modifier
     {
-        internal int m_Repeats;
-        internal int m_CompletedRuns;
+        public int m_Repeats;
+        public int m_CompletedRuns;
 
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()

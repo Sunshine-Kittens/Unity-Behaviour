@@ -14,7 +14,7 @@ namespace Unity.Behavior
         description: "Redirects the flow to the appropriate branch based on whether the condition is true or false.",
         category: "Flow/Conditional",
         id: "15fd229322992eabc0f7186e51eabcca")]
-    internal partial class BranchingConditionComposite : Composite, IConditional
+    public partial class BranchingConditionComposite : Composite, IConditional
     {
         [SerializeReference]
         protected List<Condition> m_Conditions = new List<Condition>();

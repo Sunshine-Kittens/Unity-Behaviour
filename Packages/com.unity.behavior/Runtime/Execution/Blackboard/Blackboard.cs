@@ -18,7 +18,7 @@ namespace Unity.Behavior
         public List<BlackboardVariable> Variables => m_Variables;
 
         [SerializeReference]
-        internal List<BlackboardVariable> m_Variables = new();
+        public List<BlackboardVariable> m_Variables = new();
 
         private Dictionary<SerializableGUID, BlackboardVariable> m_VariablesMap;
 
@@ -26,7 +26,7 @@ namespace Unity.Behavior
         /// Duplicates BBV from a source blackboard and generates metadata.
         /// If the source blackboard has shared BBV, SBBV are generated.
         /// </summary>
-        internal void GenerateInstanceData(Blackboard sourceBlackboard, RuntimeBlackboardAsset sourceBlackboardAsset)
+        public void GenerateInstanceData(Blackboard sourceBlackboard, RuntimeBlackboardAsset sourceBlackboardAsset)
         {
             m_Variables.Clear();
             foreach (BlackboardVariable variable in sourceBlackboard.Variables)
@@ -57,7 +57,7 @@ namespace Unity.Behavior
             CreateMetadata();
         }
 
-        internal void ValidateVariables()
+        public void ValidateVariables()
         {
             for (int i = m_Variables.Count - 1; i >= 0; i--)
             {
@@ -69,7 +69,7 @@ namespace Unity.Behavior
             }
         }
 
-        internal void ReplaceBlackboardVariable(SerializableGUID guid, BlackboardVariable newVariable)
+        public void ReplaceBlackboardVariable(SerializableGUID guid, BlackboardVariable newVariable)
         {
             if (m_VariablesMap.TryGetValue(guid, out BlackboardVariable oldVariable))
             {
@@ -80,7 +80,7 @@ namespace Unity.Behavior
             }
         }
 
-        internal bool AddVariable<TValue>(string name, TValue value)
+        public bool AddVariable<TValue>(string name, TValue value)
         {
             foreach (BlackboardVariable variable in Variables)
             {
@@ -104,7 +104,7 @@ namespace Unity.Behavior
             return true;
         }
 
-        internal bool GetVariable<TValue>(string name, out BlackboardVariable<TValue> variable)
+        public bool GetVariable<TValue>(string name, out BlackboardVariable<TValue> variable)
         {
             foreach (BlackboardVariable blackboardVariable in Variables)
             {
@@ -123,7 +123,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool GetVariable(string name, out BlackboardVariable variable)
+        public bool GetVariable(string name, out BlackboardVariable variable)
         {
             foreach (BlackboardVariable blackboardVariable in Variables)
             {
@@ -138,7 +138,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool GetVariableValue<TValue>(string name, out TValue value)
+        public bool GetVariableValue<TValue>(string name, out TValue value)
         {
             foreach (BlackboardVariable variable in Variables)
             {
@@ -153,7 +153,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool SetVariableValue<TValue>(string name, TValue value)
+        public bool SetVariableValue<TValue>(string name, TValue value)
         {
             foreach (BlackboardVariable variable in Variables)
             {
@@ -194,7 +194,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool GetVariableID(string name, out SerializableGUID id)
+        public bool GetVariableID(string name, out SerializableGUID id)
         {
             foreach (BlackboardVariable blackboardVariable in Variables)
             {
@@ -209,7 +209,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool GetVariable(SerializableGUID guid, out BlackboardVariable variable)
+        public bool GetVariable(SerializableGUID guid, out BlackboardVariable variable)
         {
             if (m_VariablesMap == null || m_Variables.Count != m_VariablesMap.Count)
             {
@@ -219,7 +219,7 @@ namespace Unity.Behavior
             return m_VariablesMap.TryGetValue(guid, out variable);
         }
 
-        internal bool GetVariable<TValue>(SerializableGUID guid, out BlackboardVariable<TValue> variable)
+        public bool GetVariable<TValue>(SerializableGUID guid, out BlackboardVariable<TValue> variable)
         {
             if (m_VariablesMap == null || m_Variables.Count != m_VariablesMap.Count)
             {
@@ -236,7 +236,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool SetVariableValue<TValue>(SerializableGUID guid, TValue value)
+        public bool SetVariableValue<TValue>(SerializableGUID guid, TValue value)
         {
             if (m_VariablesMap == null || m_Variables.Count != m_VariablesMap.Count)
             {
@@ -285,7 +285,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool SetVariableValueWithoutNotify<TValue>(SerializableGUID guid, TValue value)
+        public bool SetVariableValueWithoutNotify<TValue>(SerializableGUID guid, TValue value)
         {
             if (m_VariablesMap == null || m_Variables.Count != m_VariablesMap.Count)
             {
@@ -336,7 +336,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal void CreateMetadata()
+        public void CreateMetadata()
         {
             m_VariablesMap = new Dictionary<SerializableGUID, BlackboardVariable>(m_Variables.Count);
             foreach (BlackboardVariable var in m_Variables)

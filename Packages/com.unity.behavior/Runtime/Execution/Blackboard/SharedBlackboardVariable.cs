@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior
 {
-    internal class SharedBlackboardVariable : BlackboardVariable, ISharedBlackboardVariable
+    public class SharedBlackboardVariable : BlackboardVariable, ISharedBlackboardVariable
     {
         [SerializeField] private RuntimeBlackboardAsset m_GlobalVariablesRuntimeAsset;
         public override Type Type { get; }
@@ -39,7 +39,7 @@ namespace Unity.Behavior
             m_GlobalVariablesRuntimeAsset = globalVariablesRuntimeAsset;
         }
 
-        internal override BlackboardVariable Duplicate()
+        public override BlackboardVariable Duplicate()
         {
             var blackboardVariableDuplicate = CreateForType(Type, true);
             blackboardVariableDuplicate.Name = Name;
@@ -120,9 +120,9 @@ namespace Unity.Behavior
     }
 
     [Serializable]
-    internal class SharedBlackboardVariable<DataType> : BlackboardVariable<DataType>, ISharedBlackboardVariable
+    public class SharedBlackboardVariable<DataType> : BlackboardVariable<DataType>, ISharedBlackboardVariable
     {
-        [SerializeField] internal RuntimeBlackboardAsset m_SharedVariablesRuntimeAsset;
+        [SerializeField] public RuntimeBlackboardAsset m_SharedVariablesRuntimeAsset;
 
         public SharedBlackboardVariable()
         { }
@@ -152,7 +152,7 @@ namespace Unity.Behavior
             }
         }
 
-        internal override BlackboardVariable Duplicate()
+        public override BlackboardVariable Duplicate()
         {
             BlackboardVariable blackboardVariableDuplicate = CreateForType(Type, true);
             blackboardVariableDuplicate.Name = Name;
@@ -213,7 +213,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal interface ISharedBlackboardVariable
+    public interface ISharedBlackboardVariable
     {
         void SetSharedVariablesRuntimeAsset(RuntimeBlackboardAsset globalVariablesRuntimeAsset);
     }

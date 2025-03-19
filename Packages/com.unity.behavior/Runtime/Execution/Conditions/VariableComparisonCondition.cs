@@ -9,7 +9,7 @@ namespace Unity.Behavior
         category: "Variable Conditions",
         story: "[Variable] is [Operator] [ComparisonValue]",
         id: "a57e6f54cc9d4f41a49bc935222e0710")]
-    internal class VariableComparisonCondition : Condition
+    public class VariableComparisonCondition : Condition
     {
         /// <summary>
         /// The blackboard variable that is being compared.

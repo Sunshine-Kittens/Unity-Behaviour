@@ -35,41 +35,41 @@ namespace Unity.Behavior
         /// <summary>
         /// The name of the node.
         /// </summary>
-        internal string Name { get; }
+        public string Name { get; }
         
         /// <summary>
         /// The description of the node's function.
         /// </summary>
-        internal string Description { get; }
+        public string Description { get; }
         
         /// <summary>
         /// The story summarizing what occurs when the node executes.
         /// </summary>
-        internal string Story { get; }
+        public string Story { get; }
         
         /// <summary>
         /// The path of the icon to be used when representing the node in the graph editor.
         /// </summary>
-        internal string Icon { get; }
+        public string Icon { get; }
 
         /// <summary>
         /// The category path this node belongs to and will be shown on the search window.
         /// </summary>
-        internal string Category { get; }
+        public string Category { get; }
 
         /// <summary>
         /// A unique ID used to identify this node.
         /// </summary>
-        internal SerializableGUID GUID { get; }
+        public SerializableGUID GUID { get; }
 
         /// <summary>
         /// Controls if the node should be shown in the add node UI.
         /// </summary>
-        internal bool HideInSearch { get; }
+        public bool HideInSearch { get; }
 
         /// <summary>
         /// The path to the script file containing this attribute.
         /// </summary>
-        internal string FilePath { get; }
+        public string FilePath { get; }
     }
 }

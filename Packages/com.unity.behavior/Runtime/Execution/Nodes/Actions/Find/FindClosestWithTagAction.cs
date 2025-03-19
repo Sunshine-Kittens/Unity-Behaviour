@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Find [Target] closest to [Agent] with tag: [Tag]",
         category: "Action/Find",
         id: "66251d9e7971a8112ab0517c0279d08f")]
-    internal partial class FindClosestWithTagAction : Action
+    public partial class FindClosestWithTagAction : Action
     {
         [Tooltip("[Out Value] If a target is found, the field is assigned with it.")]
         [SerializeReference] public BlackboardVariable<GameObject> Target;

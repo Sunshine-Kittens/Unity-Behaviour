@@ -13,7 +13,7 @@ namespace Unity.Behavior
             "Linear velocity represents the rate of change of the GameObject's position.\n\n" +
         "This requires a RigidBody on the target.",
         id: "7e2ce2d5615c5bbf085d783baf85a85f")]
-    internal partial class SetVelocityAction : Action
+    public partial class SetVelocityAction : Action
     {
         [SerializeReference] public BlackboardVariable<Rigidbody> Target;
         [SerializeReference] public BlackboardVariable<Vector3> Velocity;

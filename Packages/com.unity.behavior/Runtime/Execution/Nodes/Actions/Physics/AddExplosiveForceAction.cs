@@ -12,7 +12,7 @@ namespace Unity.Behavior
         description: "Applies a force that simulates explosion effects to the target RigidBody.\n\n" +
         "Note: ExplosionOffset is an offset from the position of the ExplosionOrigin object. If the ExplosionOrigin is unset, ExplosionOffset will be a world position. You can set ExplosionOrigin to the same Target to make it relative to your target.",
         id: "60a80a024024618ad0eaca18c58d15a8")]
-    internal partial class AddExplosiveForceAction : Action
+    public partial class AddExplosiveForceAction : Action
     {
         [SerializeReference] public BlackboardVariable<Rigidbody> Target;
         [SerializeReference] public BlackboardVariable<Transform> ExplosionOrigin;

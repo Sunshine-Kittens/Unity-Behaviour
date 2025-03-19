@@ -12,7 +12,7 @@ namespace Unity.Behavior
         story: "Set [ObjectList] state to: [Active]",
         description: "Sets the active state of all the GameObjects in the list.",
         id: "0adab91b7bb783220d2d66a5a768f169")]
-    internal partial class SetObjectListActiveAction : Action
+    public partial class SetObjectListActiveAction : Action
     {
         [SerializeReference] public BlackboardVariable<List<GameObject>> ObjectList;
         [SerializeReference] public BlackboardVariable<bool> Active;

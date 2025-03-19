@@ -16,7 +16,7 @@ namespace Unity.Behavior
         hideInSearch: true,
         icon: "Icons/repeat_until_change",
         id: "bcd62844ac1b14f074e31df34956441a")]
-    internal partial class RepeatWhileConditionModifier : Modifier, IConditional
+    public partial class RepeatWhileConditionModifier : Modifier, IConditional
     {
         [SerializeReference]
         protected List<Condition> m_Conditions = new List<Condition>();

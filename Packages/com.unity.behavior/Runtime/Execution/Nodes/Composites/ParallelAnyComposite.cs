@@ -14,7 +14,7 @@ namespace Unity.Behavior
         icon: "Icons/parallel_any",
         hideInSearch: true,
         id: "e49414e2f12d45efbff56d88f5befb1d")]
-    internal partial class ParallelAnyComposite : Composite
+    public partial class ParallelAnyComposite : Composite
     {
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()
@@ -61,7 +61,7 @@ namespace Unity.Behavior
         icon: "Icons/parallel_any",
         hideInSearch: true,
         id: "2e528604708c452babf9c9ce86ca4313")]
-    internal partial class ParallelAnySuccess : Composite
+    public partial class ParallelAnySuccess : Composite
     {
         /// <inheritdoc cref="OnUpdate" />
         protected override Status OnStart()
@@ -120,7 +120,7 @@ namespace Unity.Behavior
         hideInSearch: true,
         icon: "Icons/parallel_all",
         id: "14a266d5d02d4c67a7940885be9078e8")]
-    internal partial class ParallelAllSuccess : Composite
+    public partial class ParallelAllSuccess : Composite
     {
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()

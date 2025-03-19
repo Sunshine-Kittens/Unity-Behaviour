@@ -14,7 +14,7 @@ namespace Unity.Behavior
     /// A directed graph of nodes specifying the order and conditional execution of sequential tasks.
     /// </summary>
     [Serializable, GeneratePropertyBag]
-    internal partial class BehaviorGraphModule
+    public partial class BehaviorGraphModule
     {
         [SerializeField]
         public SerializableGUID AuthoringAssetID;
@@ -34,7 +34,7 @@ namespace Unity.Behavior
         /// <summary>
         /// A blackboard containing variables used by the graph.
         /// </summary>
-        internal Blackboard Blackboard => BlackboardReference.Blackboard;
+        public Blackboard Blackboard => BlackboardReference.Blackboard;
 
         [SerializeReference]
         public BlackboardReference BlackboardReference = new BlackboardReference();
@@ -48,7 +48,7 @@ namespace Unity.Behavior
         private Stack<Node> m_NodesToEnd = new Stack<Node>(1);
         [CreateProperty, SerializeReference]
         private HashSet<Node> m_EndedNodes = new HashSet<Node>();
-        internal bool IsEndingBranch { get; private set; } = false;
+        public bool IsEndingBranch { get; private set; } = false;
         [CreateProperty]
         private bool m_NodesChanged;
 
@@ -60,7 +60,7 @@ namespace Unity.Behavior
             set => m_VersionTimestamp = value;
         }
 
-        internal GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; }
         public delegate void GraphStatusChangeEventHandler(BehaviorGraphModule graph);
         public event GraphStatusChangeEventHandler OnGraphStatusChange;
 
@@ -215,7 +215,7 @@ namespace Unity.Behavior
         /// Awakens a node if it is currently waiting on a child node or branch.
         /// </summary>
         /// <param name="node">The node to awaken.</param>
-        internal void AwakeNode(Node node)
+        public void AwakeNode(Node node)
         {
             if (ProcessedNodes.Contains(node) && node.CurrentStatus is Status.Waiting or Status.Uninitialized)
             {
@@ -243,7 +243,7 @@ namespace Unity.Behavior
         private Stack<Node> m_NodeTraversalQueue;
         private HashSet<Node> m_VisitedNodes;
 
-        internal IEnumerable<Node> Nodes()
+        public IEnumerable<Node> Nodes()
         {
             m_NodeTraversalQueue ??= new Stack<Node>(4);
             m_VisitedNodes ??= new HashSet<Node>(4);
@@ -475,7 +475,7 @@ namespace Unity.Behavior
         }
 
 #if DEBUG && UNITY_EDITOR
-        internal bool ShouldDebuggerBreak(SerializableGUID ID)
+        public bool ShouldDebuggerBreak(SerializableGUID ID)
         {
             return m_DebugInfo != null && m_DebugInfo.IsNodeBreakpointEnabled(ID);
         }

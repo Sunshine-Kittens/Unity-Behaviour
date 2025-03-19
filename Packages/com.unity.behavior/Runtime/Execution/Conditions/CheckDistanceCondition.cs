@@ -9,7 +9,7 @@ namespace Unity.Behavior
         category: "Conditions",
         story: "distance between [Transform] and [Target] [Operator] [Threshold]",
         id: "a7f68739e880f2880a0c8b3df7c50061")]
-    internal class CheckDistanceCondition : Condition
+    public class CheckDistanceCondition : Condition
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Transform> Target;

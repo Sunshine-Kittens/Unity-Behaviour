@@ -12,7 +12,7 @@ namespace Unity.Behavior
         "\nIf a collision is found, the collided object is stored in [CollidedObject].",
         category: "Action/Physics", 
         id: "a6254a477920c00f5e477c8b886b205a")]
-    internal partial class CheckCollisionsInRadiusAction : Action
+    public partial class CheckCollisionsInRadiusAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<float> Radius;

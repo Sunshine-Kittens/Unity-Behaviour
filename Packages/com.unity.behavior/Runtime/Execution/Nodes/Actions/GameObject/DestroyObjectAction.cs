@@ -14,7 +14,7 @@ namespace Unity.Behavior
         category: "Action/GameObject",
         description: "Destroys a GameObject.",
         id: "213e398c103ffd856facab409462631d")]
-    internal partial class DestroyObjectAction : Action
+    public partial class DestroyObjectAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Object;
 

@@ -10,7 +10,7 @@ namespace Unity.Behavior
         description: "Waits for an OnCollision event on the specified agent.",
         category: "Action/Physics",
         id: "c6f6fad65cfb8e64c977d3bd749a1b2c")]
-    internal partial class WaitForCollisionAction : WaitForPhysicsMessageAction
+    public partial class WaitForCollisionAction : WaitForPhysicsMessageAction
     {
         protected override void RegisterEvents()
         {

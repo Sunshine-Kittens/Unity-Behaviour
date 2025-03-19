@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/GameObject",
         description: "Prevents a GameObject from being destroyed on load.",
         id: "7c5cbc302a5b27b1126db802cdc7c965")]
-    internal partial class DontDestroyOnLoadAction : Action
+    public partial class DontDestroyOnLoadAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Target;
 

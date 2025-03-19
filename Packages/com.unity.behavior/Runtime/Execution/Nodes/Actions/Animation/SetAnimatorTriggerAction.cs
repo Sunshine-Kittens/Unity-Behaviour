@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Set animation trigger [Trigger] in [Animator] to: [TriggerState]",
         category: "Action/Animation",
         id: "554af2e866043e86bebd186cdf350589")]
-    internal partial class SetAnimatorTriggerAction : Action
+    public partial class SetAnimatorTriggerAction : Action
     {
         [SerializeReference] public BlackboardVariable<string> Trigger;
         [SerializeReference] public BlackboardVariable<Animator> Animator;

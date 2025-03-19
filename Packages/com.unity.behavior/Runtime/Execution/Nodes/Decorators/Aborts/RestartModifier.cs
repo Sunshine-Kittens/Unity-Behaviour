@@ -14,7 +14,7 @@ namespace Unity.Behavior
         description: "Restarts branch when assigned conditions are true.", 
         category: "Flow/Abort",
         id: "4d0888f06af04abd987e4b7d61f72e36")]
-    internal partial class RestartModifier : Modifier, IConditional
+    public partial class RestartModifier : Modifier, IConditional
     {
         [SerializeReference]
         protected List<Condition> m_Conditions = new List<Condition>();

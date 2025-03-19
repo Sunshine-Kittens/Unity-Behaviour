@@ -51,23 +51,23 @@ namespace Unity.Behavior
         /// </summary>
         [SerializeReference, HideInInspector]
         private List<BlackboardVariable> m_BlackboardVariableOverridesList = new ();
-        internal Dictionary<SerializableGUID, BlackboardVariable> m_BlackboardOverrides = new ();
+        public Dictionary<SerializableGUID, BlackboardVariable> m_BlackboardOverrides = new ();
 
 #if UNITY_EDITOR
         /// <summary>
         /// Events used to notify to the BehaviorGraphEditor that it needs to refresh its graph reference.
         /// </summary>
-        internal System.Action OnRuntimeDeserializationEvent;
+        public System.Action OnRuntimeDeserializationEvent;
 #endif
 
         [SerializeField][HideInInspector] 
-        internal bool m_IsInitialised = false;
+        public bool m_IsInitialised = false;
 
         [SerializeField][HideInInspector]
-        internal bool m_IsStarted = false;
+        public bool m_IsStarted = false;
 
 #if UNITY_TEST_FRAMEWORK
-        internal bool m_InitialisedFromAssetProcessor = false;
+        public bool m_InitialisedFromAssetProcessor = false;
 #endif
 
 #if NETCODE_FOR_GAMEOBJECTS
@@ -101,7 +101,7 @@ namespace Unity.Behavior
             SynchronizeOverridesWithBlackboard();
         }
 
-        internal void SynchronizeOverridesWithBlackboard()
+        public void SynchronizeOverridesWithBlackboard()
         {
             RemoveOverridesWithNoMatchInBlackboard();
             UpdateBlackboardOverridesToMatchBlackboard(); 
@@ -794,7 +794,7 @@ namespace Unity.Behavior
         }
 
 #if UNITY_EDITOR // Used for testing
-        internal bool TryGetBlackboardVariableOverride<TValue>(SerializableGUID guid, out TValue value)
+        public bool TryGetBlackboardVariableOverride<TValue>(SerializableGUID guid, out TValue value)
         {
             if (m_BlackboardOverrides.TryGetValue(guid, out var bbv))
             {
@@ -809,7 +809,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        internal bool TryGetBlackboardVariableOverride<TValue>(string variableName, out TValue value)
+        public bool TryGetBlackboardVariableOverride<TValue>(string variableName, out TValue value)
         {
             foreach (var bbvo in m_BlackboardOverrides)
             {

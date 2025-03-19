@@ -62,7 +62,7 @@ namespace Unity.Behavior
     public partial class TriggerEventAction : EventAction
     {
         [SerializeReference]
-        internal BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
+        public BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
 
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()
@@ -94,10 +94,10 @@ namespace Unity.Behavior
         description: "Waits for an event message to be received on the assigned channel.",
         category: "Events",
         id: "f61ef5906ac54fd8b4e786e1b3984ba5")]
-    internal partial class WaitForEventAction : EventAction
+    public partial class WaitForEventAction : EventAction
     {
         [SerializeReference]
-        internal BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
+        public BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
 
         private Delegate m_CaptureVariablesDelegate;
         private EventChannelBase m_CurrentChannel;

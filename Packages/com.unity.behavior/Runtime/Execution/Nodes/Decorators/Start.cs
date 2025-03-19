@@ -13,7 +13,7 @@ namespace Unity.Behavior
         description: "The root of a behaviour graph.", 
         category: "Events", 
         id: "jf0ecb9b9f44492eb96f0442454949ao")]
-    internal partial class Start : Modifier
+    public partial class Start : Modifier
     {
         /// <summary>
         /// If true, the graph will restart when all nodes completes.

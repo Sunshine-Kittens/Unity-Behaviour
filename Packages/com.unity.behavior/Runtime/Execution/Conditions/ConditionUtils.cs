@@ -108,7 +108,7 @@ namespace Unity.Behavior
             };
         }
 
-        internal static bool CheckConditions(List<Condition> conditions, bool allRequired)
+        public static bool CheckConditions(List<Condition> conditions, bool allRequired)
         {
             if (!allRequired)
             {

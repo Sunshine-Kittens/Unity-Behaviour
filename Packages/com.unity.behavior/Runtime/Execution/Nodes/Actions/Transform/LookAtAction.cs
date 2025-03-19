@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "[Transform] looks at [Target]",
         category: "Action/Transform",
         id: "64086e5d43aae3c075dab693be8ecdc0")]
-    internal partial class LookAtAction : Action
+    public partial class LookAtAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Transform> Target;

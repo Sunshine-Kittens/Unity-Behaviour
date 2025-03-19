@@ -11,7 +11,7 @@ namespace Unity.Behavior
         description: "Waits for an OnTrigger event 2D on the specified agent.",
         category: "Action/Physics",
         id: "a813ee3b7029c3cb9f45717e3bae2995")]
-    internal partial class WaitForTrigger2DAction : WaitForPhysicsMessageAction
+    public partial class WaitForTrigger2DAction : WaitForPhysicsMessageAction
     {
         protected override void RegisterEvents()
         {

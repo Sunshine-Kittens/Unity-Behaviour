@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Set [Variable] value to [Value]",
         category: "Action/Blackboard",
         id: "3cf856343a2c414c2cfd1083d30c24fa")]
-    internal partial class SetVariableValueAction : Action
+    public partial class SetVariableValueAction : Action
     {
         [SerializeReference] public BlackboardVariable Variable;
         [SerializeReference] public BlackboardVariable Value;

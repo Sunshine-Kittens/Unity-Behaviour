@@ -47,13 +47,13 @@ namespace Unity.Behavior
         /// <summary>
         /// Invokes the OnValueChanged callback.
         /// </summary>
-        internal void InvokeValueChanged() => OnValueChanged.Invoke();
+        public void InvokeValueChanged() => OnValueChanged.Invoke();
 
         /// <summary>
         /// Duplicates the variable
         /// </summary>
         /// <returns>Returns a copy of the Blackboard Variable.</returns>
-        internal abstract BlackboardVariable Duplicate();
+        public abstract BlackboardVariable Duplicate();
 
         /// <summary>
         /// Allow to set the object value without being notified of the change, if any.
@@ -67,7 +67,7 @@ namespace Unity.Behavior
         /// <param name="type">The type of the variable to be created.</param>
         /// <returns>A BlackboardVariable for a given type.</returns>
         /// <exception cref="Exception">Throws an exception when an unsupported type is specified.</exception>
-        internal static BlackboardVariable CreateForType(Type type, bool isShared = false)
+        public static BlackboardVariable CreateForType(Type type, bool isShared = false)
         {
             if (isShared)
             {
@@ -95,7 +95,7 @@ namespace Unity.Behavior
         /// <param name="value">The value to be assigned to the variable.</param>
         /// <typeparam name="DataType">The type of value to be assigned to the variable.</typeparam>
         /// <returns>Returns true if the value was set on the variable and false otherwise.</returns>
-        internal static bool SetTypedBlackboardVariableValue<DataType>(BlackboardVariable var, DataType value)
+        public static bool SetTypedBlackboardVariableValue<DataType>(BlackboardVariable var, DataType value)
         {
             if (var is BlackboardVariable<DataType> typedVar)
             {
@@ -229,7 +229,7 @@ namespace Unity.Behavior
         /// see <see cref="BlackboardVariable.Duplicate"/>
         /// </summary>
         /// <returns>Returns a copy of the Blackboard Variable.</returns>
-        internal override BlackboardVariable Duplicate()
+        public override BlackboardVariable Duplicate()
         {
             var blackboardVariableDuplicate = CreateForType(Type);
             blackboardVariableDuplicate.Name = Name;

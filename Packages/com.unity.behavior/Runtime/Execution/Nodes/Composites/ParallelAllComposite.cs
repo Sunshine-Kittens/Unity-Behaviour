@@ -13,7 +13,7 @@ namespace Unity.Behavior
         description: "Executes all branches at the same time.",
         icon: "Icons/parallel_all",
         id: "eff83f53d0984556bad3f4cbc8ff681e")]
-    internal partial class ParallelAllComposite : Composite
+    public partial class ParallelAllComposite : Composite
     {
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()

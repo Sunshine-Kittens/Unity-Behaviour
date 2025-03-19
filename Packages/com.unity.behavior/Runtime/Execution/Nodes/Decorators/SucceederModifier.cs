@@ -12,7 +12,7 @@ namespace Unity.Behavior
         description: "Forces success for the child node.", 
         icon: "Icons/success", 
         id: "2a2fadb041974c9a9bc85921a31f8762")]
-    internal partial class SucceederModifier : Modifier
+    public partial class SucceederModifier : Modifier
     {
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()

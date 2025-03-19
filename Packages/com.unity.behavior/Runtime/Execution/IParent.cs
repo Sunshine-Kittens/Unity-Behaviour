@@ -1,6 +1,6 @@
 ﻿namespace Unity.Behavior
 {
-    internal interface IParent
+    public interface IParent
     {
         void Add(Node child);
     }

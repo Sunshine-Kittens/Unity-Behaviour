@@ -13,7 +13,7 @@ namespace Unity.Behavior
         id: "45b0abd81036c6ba1089944eb166dc54",
         description: "Plays a ParticleSystem at the Target location. " +
         "\nThe ParticleSystems are internally pooled and reused when possible.")]
-    internal partial class PlayParticleSystemAction : Action
+    public partial class PlayParticleSystemAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> ParticleSystem;
         [SerializeReference] public BlackboardVariable<GameObject> Target;

@@ -13,7 +13,7 @@ namespace Unity.Behavior
         icon: "Icons/selector",
         category: "Flow",
         id: "2bdfd1f8aaec469f8df1fd3190d7466b")]
-    internal partial class SelectorComposite : Composite
+    public partial class SelectorComposite : Composite
     {
         [CreateProperty] private int m_CurrentChild;
 

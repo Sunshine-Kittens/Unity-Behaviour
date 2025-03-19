@@ -14,7 +14,7 @@ namespace Unity.Behavior
     [Serializable, GeneratePropertyBag]
     public partial class BehaviorGraph : ScriptableObject, ISerializationCallbackReceiver
     {
-        internal static readonly SerializableGUID k_GraphSelfOwnerID = new SerializableGUID(1, 0);
+        public static readonly SerializableGUID k_GraphSelfOwnerID = new SerializableGUID(1, 0);
 
         /// <summary>
         /// The blackboard reference used for accessing variables.
@@ -30,16 +30,16 @@ namespace Unity.Behavior
         /// The set of linked graphs that make up the behaviour.
         /// </summary>
         [SerializeReference]
-        internal List<BehaviorGraphModule> Graphs = new();
+        public List<BehaviorGraphModule> Graphs = new();
 
         /// <summary>
         /// The primary entry point for the behaviour defined by the BehaviorAuthoringGraph.
         /// </summary>
         [SerializeReference]
-        internal BehaviorGraphModule RootGraph;
+        public BehaviorGraphModule RootGraph;
 
         [SerializeReference, DontCreateProperty]
-        internal BehaviorGraphDebugInfo m_DebugInfo;
+        public BehaviorGraphDebugInfo m_DebugInfo;
 
         /// <summary>
         /// Begins execution of the behavior graph.
@@ -86,7 +86,7 @@ namespace Unity.Behavior
             Start();
         }
 
-        internal void AssignGameObjectToGraphModules(GameObject gameObject)
+        public void AssignGameObjectToGraphModules(GameObject gameObject)
         {
             if (RootGraph == null)
             {
@@ -103,7 +103,7 @@ namespace Unity.Behavior
         /// <summary>
         /// Raise OnRuntimeSerialize in each BehaviorGraphModule to notify nodes.
         /// </summary>
-        internal void SerializeGraphModules()
+        public void SerializeGraphModules()
         {
             for (int i = Graphs.Count - 1; i >= 0; i--)
             {
@@ -114,7 +114,7 @@ namespace Unity.Behavior
         /// <summary>
         /// Raise OnRuntimeDeserialize in each BehaviorGraphModule to notify nodes.
         /// </summary>
-        internal void DeserializeGraphModules()
+        public void DeserializeGraphModules()
         {
             for (int i = Graphs.Count - 1; i >= 0; i--)
             {

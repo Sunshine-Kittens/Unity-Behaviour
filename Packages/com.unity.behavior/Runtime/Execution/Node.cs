@@ -58,7 +58,7 @@ namespace Unity.Behavior
         /// Sets the current status of the node.
         /// </summary>
         /// <param name="status"></param>
-        internal void SetCurrentStatus(Status status)
+        public void SetCurrentStatus(Status status)
         {
             CurrentStatus = status;
         }
@@ -67,19 +67,19 @@ namespace Unity.Behavior
         /// to determine the node's lifecycle.
         /// </summary>
         [CreateProperty]
-        internal bool IsRunning { get; set; } = false;
+        public bool IsRunning { get; set; } = false;
 
         /// <summary>
         /// The unique ID assigned to the node.
         /// </summary>
         [SerializeField]
-        internal SerializableGUID ID;
+        public SerializableGUID ID;
 
         /// <summary>
         /// The BehaviorGraph containing the node instance.
         /// </summary>
         [SerializeReference, DontCreateProperty]
-        internal BehaviorGraphModule Graph;
+        public BehaviorGraphModule Graph;
 
         /// <summary>
         /// The game object that contains the `BehaviorGraphAgent` that is running the behavior graph.
@@ -87,12 +87,12 @@ namespace Unity.Behavior
         public GameObject GameObject => Graph.GameObject;
 
         /// <summary>
-        /// The constructor for Node, currently internal to prevent creation of new node base classes.
+        /// The constructor for Node, currently public to prevent creation of new node base classes.
         /// </summary>
-        internal Node()
+        public Node()
         { }
 
-        internal Status Start()
+        public Status Start()
         {
             CurrentStatus = Status.Running;
             IsRunning = true;
@@ -103,7 +103,7 @@ namespace Unity.Behavior
             return OnStart();
         }
 
-        internal Status Update()
+        public Status Update()
         {
 #if DEBUG && UNITY_EDITOR
             // The user set a breakpoint in the graph editor. Call a break on the debugger.
@@ -112,7 +112,7 @@ namespace Unity.Behavior
             return OnUpdate();
         }
 
-        internal void End()
+        public void End()
         {
             if (CurrentStatus == Status.Running ||
                 CurrentStatus == Status.Waiting)
@@ -128,12 +128,12 @@ namespace Unity.Behavior
             OnEnd();
         }
 
-        internal void Serialize()
+        public void Serialize()
         {
             OnSerialize();
         }
 
-        internal void Deserialize()
+        public void Deserialize()
         {
             OnDeserialize();
         }

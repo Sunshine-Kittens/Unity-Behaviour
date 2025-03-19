@@ -31,7 +31,7 @@
         LowerOrEqual
     }
     
-    internal enum BooleanOperator
+    public enum BooleanOperator
     {
     }
 }

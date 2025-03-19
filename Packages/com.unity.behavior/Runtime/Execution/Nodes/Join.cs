@@ -12,7 +12,7 @@ namespace Unity.Behavior
         /// <summary>
         /// The parents of the node.
         /// </summary>
-        public List<Node> Parents { get => m_Parents; internal set => m_Parents = value; }
+        public List<Node> Parents { get => m_Parents; set => m_Parents = value; }
         [SerializeReference, DontCreateProperty]
         private List<Node> m_Parents = new List<Node>();
 
@@ -20,7 +20,7 @@ namespace Unity.Behavior
         /// The child of the node.
         /// </summary>
         [CreateProperty]
-        public Node Child { get => m_Child; internal set => m_Child = value; }
+        public Node Child { get => m_Child; set => m_Child = value; }
         [SerializeReference, DontCreateProperty]
         private Node m_Child;
 

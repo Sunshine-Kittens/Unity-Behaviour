@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Unity.Behavior
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
-        internal static string CleanUp(this string input)
+        public static string CleanUp(this string input)
         {
             input = Regex.Replace(input, @"^\s*$\n|\r", string.Empty, RegexOptions.Multiline);
             var charsToRemove = new[] { ":", "(", ")", "[", "]", "{", "}","-" };
@@ -21,7 +21,7 @@ namespace Unity.Behavior
             return sb.ToString();
         }
 
-        internal static string CapitalizeFirstLetter(this string input)
+        public static string CapitalizeFirstLetter(this string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;

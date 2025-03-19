@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Unity.Behavior
 {
     [Serializable]
-    internal abstract class BaseCastBlackboardVariable<OriginalType, CastType> : BlackboardVariable<CastType>
+    public abstract class BaseCastBlackboardVariable<OriginalType, CastType> : BlackboardVariable<CastType>
     {
         [SerializeReference]
         protected BlackboardVariable<OriginalType> m_SourceVariable;
@@ -43,7 +43,7 @@ namespace Unity.Behavior
         protected abstract void OnSourceValueChanged();
     }
 
-    internal class Vector2ToVector3BlackboardVariable : BaseCastBlackboardVariable<Vector2, Vector3>
+    public class Vector2ToVector3BlackboardVariable : BaseCastBlackboardVariable<Vector2, Vector3>
     {
         public Vector2ToVector3BlackboardVariable() { }
 
@@ -62,7 +62,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class Vector2ToVector4BlackboardVariable : BaseCastBlackboardVariable<Vector2, Vector4>
+    public class Vector2ToVector4BlackboardVariable : BaseCastBlackboardVariable<Vector2, Vector4>
     {
         public Vector2ToVector4BlackboardVariable() { }
 
@@ -81,7 +81,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class Vector3ToVector2BlackboardVariable : BaseCastBlackboardVariable<Vector3, Vector2>
+    public class Vector3ToVector2BlackboardVariable : BaseCastBlackboardVariable<Vector3, Vector2>
     {
         public Vector3ToVector2BlackboardVariable() { }
 
@@ -100,7 +100,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class Vector3ToVector4BlackboardVariable : BaseCastBlackboardVariable<Vector3, Vector4>
+    public class Vector3ToVector4BlackboardVariable : BaseCastBlackboardVariable<Vector3, Vector4>
     {
         public Vector3ToVector4BlackboardVariable() { }
 
@@ -119,7 +119,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class Vector4ToVector2BlackboardVariable : BaseCastBlackboardVariable<Vector4, Vector2>
+    public class Vector4ToVector2BlackboardVariable : BaseCastBlackboardVariable<Vector4, Vector2>
     {
         public Vector4ToVector2BlackboardVariable() { }
 
@@ -138,7 +138,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class Vector4ToVector3BlackboardVariable : BaseCastBlackboardVariable<Vector4, Vector3>
+    public class Vector4ToVector3BlackboardVariable : BaseCastBlackboardVariable<Vector4, Vector3>
     {
         public Vector4ToVector3BlackboardVariable() { }
 
@@ -157,7 +157,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class FloatToDoubleBlackboardVariable : BaseCastBlackboardVariable<float, double>
+    public class FloatToDoubleBlackboardVariable : BaseCastBlackboardVariable<float, double>
     {
         public FloatToDoubleBlackboardVariable() { }
 
@@ -176,7 +176,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class FloatToIntBlackboardVariable : BaseCastBlackboardVariable<float, int>
+    public class FloatToIntBlackboardVariable : BaseCastBlackboardVariable<float, int>
     {
         public FloatToIntBlackboardVariable() { }
 
@@ -195,7 +195,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class DoubleToFloatBlackboardVariable : BaseCastBlackboardVariable<double, float>
+    public class DoubleToFloatBlackboardVariable : BaseCastBlackboardVariable<double, float>
     {
         public DoubleToFloatBlackboardVariable() { }
 
@@ -214,7 +214,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class DoubleToIntBlackboardVariable : BaseCastBlackboardVariable<double, int>
+    public class DoubleToIntBlackboardVariable : BaseCastBlackboardVariable<double, int>
     {
         public DoubleToIntBlackboardVariable() { }
 
@@ -233,7 +233,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class IntToFloatBlackboardVariable : BaseCastBlackboardVariable<int, float>
+    public class IntToFloatBlackboardVariable : BaseCastBlackboardVariable<int, float>
     {
         public IntToFloatBlackboardVariable() { }
 
@@ -252,7 +252,7 @@ namespace Unity.Behavior
         }
     }
 
-    internal class IntToDoubleBlackboardVariable : BaseCastBlackboardVariable<int, double>
+    public class IntToDoubleBlackboardVariable : BaseCastBlackboardVariable<int, double>
     {
         public IntToDoubleBlackboardVariable() { }
 

@@ -14,7 +14,7 @@ namespace Unity.Behavior
         description: "Aborts branch when assigned conditions are true.", 
         category: "Flow/Abort",
         id: "f3c6242eed224ca2955906276c0497b6")]
-    internal partial class AbortModifier : Modifier, IConditional 
+    public partial class AbortModifier : Modifier, IConditional 
     {
         [SerializeReference]
         protected List<Condition> m_Conditions = new List<Condition>();

@@ -12,7 +12,7 @@ namespace Unity.Behavior
         "\nThe instanciated object is stored in [InstantitedObject].",
         category: "Action/GameObject",
         id: "54f091ab6bb57615eae84c1e44203a04")]
-    internal partial class InstantiateObjectAction : Action
+    public partial class InstantiateObjectAction : Action
     {
         public enum TargetMode
         {

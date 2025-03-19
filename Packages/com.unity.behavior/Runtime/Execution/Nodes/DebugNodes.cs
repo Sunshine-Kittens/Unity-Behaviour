@@ -25,7 +25,7 @@ namespace Unity.Behavior
         description: "Logs the value of a variable to the console.",
         category: "Action/Debug",
         id: "b95551d408d852c7e54ce84d1369f56a")]
-    internal partial class LogVariableToConsoleAction : Action
+    public partial class LogVariableToConsoleAction : Action
     {
         [SerializeReference] public BlackboardVariable Variable;
 
@@ -43,7 +43,7 @@ namespace Unity.Behavior
         description: "Logs the value of a variable to the console when it changes.",
         category: "Action/Debug",
         id: "b95551d408d852c7e54ce84d1369f56b")]
-    internal partial class LogVariableValueChangeAction : Action
+    public partial class LogVariableValueChangeAction : Action
     {
         [SerializeReference] public BlackboardVariable Variable;
         [SerializeReference] public BlackboardVariable<bool> PauseEditor;
@@ -98,7 +98,7 @@ namespace Unity.Behavior
         description: "Logs a message to the console.",
         category: "Action/Debug",
         id: "b95551d408d852c7e54ce84d1369f56c")]
-    internal partial class LogMessageToConsoleAction : Action
+    public partial class LogMessageToConsoleAction : Action
     {
         public enum LogType
         {

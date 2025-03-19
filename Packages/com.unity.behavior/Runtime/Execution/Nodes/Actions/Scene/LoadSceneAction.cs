@@ -12,7 +12,7 @@ namespace Unity.Behavior
         category: "Action/Scene",
         description: "Loads a Unity scene. Uses the Mode variable to select whether to load additive or replace the current scene [Single].",
         id: "8d8d7217fed8a45aa43f5776b9849e7f")]
-    internal partial class LoadSceneAction : Action
+    public partial class LoadSceneAction : Action
     {
         [Tooltip("You can provide either the full Scene path, the path shown in the Build Settings window, or just the Scene name." +
             "\nIf you only provide the Scene name, Unity loads the first Scene in the list that matches.")]

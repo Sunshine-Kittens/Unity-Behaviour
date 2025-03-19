@@ -13,7 +13,7 @@ namespace Unity.Behavior
         description: "Activates its child when any parent starts this node. It cannot restart until the child's subgraph has ended.", 
         icon: "Icons/parallel_any",
         id: "bf0ecb9b9f44492eb96f0442454949a1")]
-    internal partial class WaitForAnyComposite : Join
+    public partial class WaitForAnyComposite : Join
     {
         [CreateProperty] private int m_StartCount;
         [CreateProperty] private double m_LastFrameTimestamp;

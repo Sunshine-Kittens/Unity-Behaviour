@@ -14,7 +14,7 @@ namespace Unity.Behavior
         hideInSearch: true,
         icon: "Icons/repeat_until_change",
         id: "7483f88afa3148a1a565f17863ebd38d")]
-    internal partial class RepeatUntilFailModifier : Modifier
+    public partial class RepeatUntilFailModifier : Modifier
     {
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()
