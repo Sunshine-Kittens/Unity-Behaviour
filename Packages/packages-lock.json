@@ -10,7 +10,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.behavior": {
-      "version": "file:com.unity.behavior@9aa96a37293c",
+      "version": "file:com.unity.behavior",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
