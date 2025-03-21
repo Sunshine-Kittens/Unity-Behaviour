@@ -16,7 +16,7 @@ namespace Unity.Behavior
         /// </summary>
         public Node Parent { get => m_Parent; set { m_Parent = value; } }
         [SerializeReference]
-        public Node m_Parent;
+        protected Node m_Parent;
 
         /// <summary>
         /// The children of the node.

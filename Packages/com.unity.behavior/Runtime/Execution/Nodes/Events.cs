@@ -62,7 +62,7 @@ namespace Unity.Behavior
     public partial class TriggerEventAction : EventAction
     {
         [SerializeReference]
-        public BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
+        protected BlackboardVariable[] MessageVariables = new BlackboardVariable[4];
 
         /// <inheritdoc cref="OnStart" />
         protected override Status OnStart()
