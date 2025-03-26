@@ -75,7 +75,7 @@
 /* Action node styles */
 
 .Action #NodeContentContainer {
-    height: 36px;
+    height: auto;
     padding: 8px;
 }
 

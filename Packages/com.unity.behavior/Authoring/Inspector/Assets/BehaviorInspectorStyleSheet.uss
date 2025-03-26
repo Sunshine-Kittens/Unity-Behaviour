@@ -13,7 +13,7 @@ Label {
 	align-items: center;
 	flex-grow: 1;
 	margin-top: 8px;
-	height: 20px;
+	height: auto;
 }
 
 .LinkField {

@@ -5,9 +5,12 @@
     align-items: center;
     align-content: center;
     flex-shrink: 1;
-    flex-grow: 0;
-    height: 20px;
+    flex-grow: 1;
+    height: auto;
     border-width: 1px;
+    white-space: normal;
+    overflow: visible;
+    max-width: 300px;
 }
 
 .Runtime-Object-Field {
@@ -46,18 +49,25 @@ BaseLinkField {
 .LinkField .unity-base-field {
     flex-shrink: 0;
     flex-grow: 1;
+    height: auto;
 }
 
 .LinkField #unity-text-input {
     min-width: 20px;
+    height: auto;
+    white-space: normal;
+    overflow: visible;
 }
 
 .LinkField .unity-text-element {
-    flex-grow: 0;
-    overflow: hidden;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: visible;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
     background-color: initial;
+    max-width: 350px;
+    height: auto;
 }
 
 .LinkField .unity-color-field {
@@ -80,7 +90,7 @@ BaseLinkField {
 .LinkButtonContainer {
     position: absolute;
     right: 0;
-    height: 20px;
+    height: auto;
     width: 20px;
     justify-content: center;
 }
@@ -199,17 +209,20 @@ BaseLinkField .LinkButton {
     margin: 0;
     padding: 0;
     opacity: 0.5;
+    flex-grow: 1;
+    white-space: normal;
+    overflow: visible;
 }
 
 .FieldContainer {
-    height : 100%;
+    height : auto;
     flex-grow: 1;
     justify-content: center;
 }
 
 #InputField {
-    height: 19px;
-    max-height: 19px;
+    height: auto;
+    max-height: auto;
     border-radius: var(--appui-border-radius-md);
     background-color: #2A2A2A;
     border-color: var(--appui-alias-field-border-color-default);
@@ -314,7 +327,7 @@ EnumLinkField #appui-picker__caret {
     border-radius: var(--appui-border-radius-md);
     border-width: 1px;
     border-color: var(--appui-alias-field-border-color-default);
-    height: 20px;
+    height: auto;
     width: 20px;
     min-height: 20px;
     min-width: 20px;
