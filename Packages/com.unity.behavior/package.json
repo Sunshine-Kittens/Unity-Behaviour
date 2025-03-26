@@ -14,6 +14,10 @@
     "gameplay",
     "NPCs"
   ],
+  "author": {
+    "name": "Sunshine + Kittens",
+    "url": "https://github.com/Sunshine-Kittens"
+  },
   "dependencies": {
     "com.unity.dt.app-ui": "2.0.0-pre.16",
     "com.unity.modules.unitywebrequest": "1.0.0",
