@@ -14,7 +14,7 @@ namespace Unity.Behavior
     /// A directed graph of nodes specifying the order and conditional execution of sequential tasks.
     /// </summary>
     [Serializable, GeneratePropertyBag]
-    internal partial class BehaviorGraphModule
+    public partial class BehaviorGraphModule
     {
         [SerializeField]
         public SerializableGUID AuthoringAssetID;
