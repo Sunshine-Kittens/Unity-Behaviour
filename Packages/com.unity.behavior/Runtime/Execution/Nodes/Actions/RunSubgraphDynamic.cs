@@ -46,7 +46,7 @@ namespace Unity.Behavior
 
             if (GameObject != null)
             {
-                BehaviorGraphAgent agent = GameObject.GetComponent<BehaviorGraphAgent>();
+                BehaviorGraphAgentBase agent = GameObject.GetComponent<BehaviorGraphAgentBase>();
                 if (agent != null)
                 {
                     BehaviorGraph graph = agent.Graph;

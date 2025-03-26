@@ -87,7 +87,7 @@ namespace Unity.Behavior
         }
 
         /// <summary>
-        /// The game object that contains the `BehaviorGraphAgent` that is running the behavior graph.
+        /// The game object that contains the `BehaviorGraphAgentBase` that is running the behavior graph.
         /// </summary>
         public GameObject GameObject => m_Graph.GameObject;
 

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+
 using Unity.Behavior.GraphFramework;
+
 using UnityEngine;
 
 #if NETCODE_FOR_GAMEOBJECTS
@@ -324,12 +326,10 @@ namespace Unity.Behavior
 
         /// <summary>
         /// Returns an instance of the behaviour graph.
-        /// In the base implementation this is SerializedReference of the BehaviorGraph Graph property.
+        /// This may be a new unique copy for typical AI behaviour graphs, or simply return a reference
+        /// to the currently set graph if it is shared and not expected to be run in parallel.
         /// </summary>
-        protected virtual BehaviorGraph GetGraphInstance()
-        {
-            return m_Graph;
-        }
+        protected abstract BehaviorGraph GetGraphInstance();
 
         /// <summary>
         /// Gets a variable associated with the specified name and value type. For values of type subclassed from

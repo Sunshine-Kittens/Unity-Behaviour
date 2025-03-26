@@ -22,7 +22,7 @@ namespace Unity.Behavior
         {
             Undo.RecordObject(gameObject, "Drop Behavior Graph Object");
             BehaviorAuthoringGraph behaviorAuthoringGraph = DragAndDrop.objectReferences[0] as BehaviorAuthoringGraph;
-            var behaviorGraphAgent = gameObject.GetComponent<BehaviorGraphAgent>();
+            BehaviorGraphAgentBase behaviorGraphAgent = gameObject.GetComponent<BehaviorGraphAgentBase>();
             if (behaviorGraphAgent == null)
             {
                 behaviorGraphAgent = Undo.AddComponent<BehaviorGraphAgent>(gameObject);
