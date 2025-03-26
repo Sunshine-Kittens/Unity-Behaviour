@@ -562,7 +562,7 @@ namespace Unity.Behavior
                 return null;
             }
             
-            if (runtimeGraph.RootGraph == null || HasOutstandingChanges || forceRebuild)
+            if (runtimeGraph.m_RootGraph == null || HasOutstandingChanges || forceRebuild)
             {
                 // Debug.Log($"GraphAsset[<b>{name}</b>].BuildRuntimeGraph");
                 runtimeGraph.Graphs.Clear();
@@ -574,7 +574,7 @@ namespace Unity.Behavior
                 // Debug.Log($"<b>Skipping</b> GraphAsset[<b>{name}</b>].BuildRuntimeGraph");
                 // If no outstanding change, we only update the version timestamp.
                 // Any cosmetic data (like node position) are SerializedField, so the asset only needs to be save.
-                runtimeGraph.RootGraph.VersionTimestamp = VersionTimestamp;
+                runtimeGraph.m_RootGraph.VersionTimestamp = VersionTimestamp;
             }
 
 #if UNITY_EDITOR

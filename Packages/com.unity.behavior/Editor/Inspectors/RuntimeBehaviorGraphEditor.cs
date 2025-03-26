@@ -19,7 +19,7 @@ namespace Unity.Behavior
         /// <inheritdoc />
         public override void OnInspectorGUI()
         {
-            if (!Graph || Graph.RootGraph == null)
+            if (!Graph || Graph.m_RootGraph == null)
             {
                 EditorGUILayout.LabelField("No graphs to display.");
                 return;

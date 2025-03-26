@@ -132,7 +132,7 @@ namespace Unity.Behavior
             Cleanup();
             InitializeBlackboard();
 
-            m_Graph.RootGraph = BuildGraph();
+            m_Graph.m_RootGraph = BuildGraph();
 #if UNITY_EDITOR
             m_Graph.m_DebugInfo = m_Asset.GetOrCreateGraphDebugInfo(m_Asset);
 #endif

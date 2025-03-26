@@ -28,7 +28,7 @@ namespace Unity.Behavior
                 EditorUtility.SetDirty(gameObject);
             }
             var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(behaviorAuthoringGraph);
-            if (runtimeGraph.RootGraph == null)
+            if (runtimeGraph.m_RootGraph == null)
             {
                 behaviorAuthoringGraph.BuildRuntimeGraph();
             }
