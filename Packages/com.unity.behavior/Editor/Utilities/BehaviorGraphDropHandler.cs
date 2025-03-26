@@ -28,7 +28,7 @@ namespace Unity.Behavior
                 behaviorGraphAgent = Undo.AddComponent<BehaviorGraphAgent>(gameObject);
             }
             var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(behaviorAuthoringGraph);
-            if (runtimeGraph.RootGraph == null)
+            if (runtimeGraph.m_RootGraph == null)
             {
                 behaviorAuthoringGraph.BuildRuntimeGraph();
                 behaviorAuthoringGraph.SaveAsset();

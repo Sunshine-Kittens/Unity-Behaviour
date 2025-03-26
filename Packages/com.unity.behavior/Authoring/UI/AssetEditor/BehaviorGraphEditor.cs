@@ -385,7 +385,7 @@ namespace Unity.Behavior
             List<BehaviorGraphAgentBase> matchingAgents = new List<BehaviorGraphAgentBase>();
             foreach (BehaviorGraphAgentBase agent in agents)
             {
-                if (!agent.Graph || agent.Graph.RootGraph == null)
+                if (!agent.Graph || agent.Graph.m_RootGraph == null)
                 {
                     continue;
                 }
@@ -467,7 +467,7 @@ namespace Unity.Behavior
 
         private void SetupDebugTarget(BehaviorGraphAgentBase agent)
         {
-            if (agent == null || !agent.Graph || agent.Graph.RootGraph == null)
+            if (agent == null || !agent.Graph || agent.Graph.m_RootGraph == null)
             {
                 BehaviorGraphView.ActiveDebugGraph = null;
                 return;

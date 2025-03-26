@@ -43,7 +43,7 @@ namespace Unity.Behavior
                 string assetPath = AssetDatabase.GetAssetPath(m_SharedGraph);
                 if (string.IsNullOrEmpty(assetPath))
                 {
-                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
+                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.m_RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
                     {
                         SharedAuthoringGraph = sharedAuthoringGraph;
                     }
@@ -216,7 +216,7 @@ namespace Unity.Behavior
                     {
                         DragAndDrop.AcceptDrag();
                         var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(authoringGraph);
-                        if (runtimeGraph?.RootGraph == null)
+                        if (runtimeGraph?.m_RootGraph == null)
                         {
                             authoringGraph.BuildRuntimeGraph();
                         }
