@@ -24,7 +24,7 @@ namespace Unity.Behavior
         /// <summary>
         /// The graph of behaviours to be executed by the agent.
         /// </summary>
-        public virtual BehaviorGraph Graph
+        public BehaviorGraph Graph
         {
             get => m_Graph;
             set
