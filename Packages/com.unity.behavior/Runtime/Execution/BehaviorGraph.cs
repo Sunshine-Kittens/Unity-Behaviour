@@ -50,9 +50,15 @@ namespace Unity.Behavior
         /// <summary>
         /// The primary entry point for the behaviour defined by the BehaviorAuthoringGraph.
         /// </summary>
-        [SerializeReference]
+        [SerializeReference, DontCreateProperty]
         internal BehaviorGraphModule m_RootGraph;
-        public BehaviorGraphModule RootGraph => m_RootGraph;
+
+        [CreateProperty]
+        public BehaviorGraphModule RootGraph
+        {
+            get { return m_RootGraph; }
+            internal set { m_RootGraph = value; }
+        }
 
         [SerializeReference, DontCreateProperty]
         internal BehaviorGraphDebugInfo m_DebugInfo;
