@@ -1,19 +1,22 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Unity.Behavior.GraphFramework;
+
 using UnityEditor;
+
 using UnityEditorInternal;
+
 using UnityEngine;
 
 namespace Unity.Behavior
 {
-    [CustomEditor(typeof(BehaviorGraphAgent), editorForChildClasses: true)]
+    [CustomEditor(typeof(BehaviorGraphAgentBase), editorForChildClasses: true)]
     [CanEditMultipleObjects]
-    internal class BehaviorGraphAgentEditor : Editor
+    internal class BehaviorGraphAgentBaseBaseEditor : Editor
     {
-        private readonly List<BehaviorGraphAgent> m_TargetAgents = new();
+        private readonly List<BehaviorGraphAgentBase> m_TargetAgents = new();
         private bool m_ShowBlackboard = true;
         private readonly Dictionary<SerializableGUID, bool> m_ListVariableFoldoutStates = new Dictionary<SerializableGUID, bool>();
         private readonly Dictionary<SerializableGUID, VariableModel> m_VariableGUIDToVariableModel = new Dictionary<SerializableGUID, VariableModel>();
@@ -79,7 +82,7 @@ namespace Unity.Behavior
         }
 
         // Note: Target.Graph is set to a non-persistent copy when the agent is has been initialized at runtime.
-        private bool HasRuntimeGraphAssetBeenDeleted(BehaviorGraphAgent agent) =>
+        private bool HasRuntimeGraphAssetBeenDeleted(BehaviorGraphAgentBase agent) =>
             !ReferenceEquals(agent.Graph, null) && !EditorUtility.IsPersistent(agent.Graph);
 
         private void OnEnable()
@@ -88,7 +91,7 @@ namespace Unity.Behavior
             m_TargetAgents.Clear();
             foreach (UnityEngine.Object objTarget in targets)
             {
-                var targetAgent = objTarget as BehaviorGraphAgent;
+                var targetAgent = objTarget as BehaviorGraphAgentBase;
                 m_TargetAgents.Add(targetAgent);
                 UpdateBehaviorGraphIfNeeded(targetAgent);
             }
@@ -97,7 +100,7 @@ namespace Unity.Behavior
         private void FindSharedGraph()
         {
             // Use the first target to check for mixed values
-            BehaviorGraphAgent firstTarget = m_TargetAgents[0];
+            BehaviorGraphAgentBase firstTarget = m_TargetAgents[0];
             bool targetsShareGraph = true;
             foreach (var targetAgent in m_TargetAgents)
             {
@@ -145,12 +148,12 @@ namespace Unity.Behavior
 
 #if NETCODE_FOR_GAMEOBJECTS
             EditorGUI.BeginChangeCheck();
-            BehaviorGraphAgent firstTarget = m_TargetAgents[0];
+            BehaviorGraphAgentBase firstTarget = m_TargetAgents[0];
             bool netcodeRunOnlyOnOwner = EditorGUILayout.Toggle("Netcode: Run only on Owner", firstTarget.NetcodeRunOnlyOnOwner);
 
             if (EditorGUI.EndChangeCheck())
             {
-                foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+                foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
                 {
                     Undo.RecordObject(targetAgent, "Toggle NetcodeRunOnlyOnOwner");
                     targetAgent.NetcodeRunOnlyOnOwner = netcodeRunOnlyOnOwner;
@@ -159,7 +162,7 @@ namespace Unity.Behavior
 #endif
 
             // Update overrides list before drawing the blackboard.
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 if (targetAgent.BlackboardReference != null)
                 {
@@ -178,7 +181,7 @@ namespace Unity.Behavior
         private void AssignGraphToAgents(BehaviorGraph graph)
         {
             // Assign the new graph to all targets.
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 if (graph == targetAgent.Graph)
                 {
@@ -246,7 +249,7 @@ namespace Unity.Behavior
                 EditorGUI.showMixedValue = false;
                 bool isOverride = false;
                 BlackboardVariable firstTargetVariable = null;
-                foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+                foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
                 {
                     BlackboardVariable targetVariable = GetTargetVariable(targetAgent, variable.GUID);
                     firstTargetVariable ??= targetVariable;
@@ -680,7 +683,7 @@ namespace Unity.Behavior
         // This should be used for all value types whose data type matches their variable type.
         private void UpdateValueIfChanged<DataType>(DataType currentValue, SerializableGUID varID)
         {
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 BlackboardVariable<DataType> targetVariable = (BlackboardVariable<DataType>)GetTargetVariable(targetAgent, varID);
                 if (EqualityComparer<DataType>.Default.Equals(currentValue, targetVariable.Value))
@@ -695,7 +698,7 @@ namespace Unity.Behavior
         // This can only be used for list types.
         private void UpdateValueIfChanged<DataType>(List<DataType> currentValue, SerializableGUID varID)
         {
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 BlackboardVariable<List<DataType>> targetVariable = (BlackboardVariable<List<DataType>>)GetTargetVariable(targetAgent, varID);
                 // TODO: Check if LINQ usage here is generating allocs.
@@ -711,7 +714,7 @@ namespace Unity.Behavior
         // This should be used for all value types whose data type doesn't match their variable type, as is the case for Enums which Unity EnumField casts to Enum.
         private void UpdateValueIfChanged<DataType>(DataType currentValue, SerializableGUID varID, Type type)
         {
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 BlackboardVariable targetVariable = GetTargetVariable(targetAgent, varID);
                 if (EqualityComparer<DataType>.Default.Equals(currentValue, (DataType)targetVariable.ObjectValue) ||
@@ -727,7 +730,7 @@ namespace Unity.Behavior
         // This should be used for Objects.
         private void ValidateTypeAndUpdateValueIfChanged(object currentValue, SerializableGUID varID)
         {
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 BlackboardVariable targetVariable = GetTargetVariable(targetAgent, varID);
                 if (ReferenceEquals(targetVariable.ObjectValue, currentValue) || !targetVariable.Type.IsInstanceOfType(currentValue))
@@ -738,7 +741,7 @@ namespace Unity.Behavior
             }
         }
 
-        private void UpdateBehaviorGraphIfNeeded(BehaviorGraphAgent targetAgent)
+        private void UpdateBehaviorGraphIfNeeded(BehaviorGraphAgentBase targetAgent)
         {
             if (Application.isPlaying)
             {
@@ -777,7 +780,7 @@ namespace Unity.Behavior
             EditorUtility.SetDirty(targetAgent);
         }
 
-        private bool HaveSameGraph(BehaviorGraphAgent agent, BehaviorGraphAgent otherAgent)
+        private bool HaveSameGraph(BehaviorGraphAgentBase agent, BehaviorGraphAgentBase otherAgent)
         {
             // The two share the same assigned asset.
             if (ReferenceEquals(agent.Graph, otherAgent.Graph))
@@ -792,7 +795,7 @@ namespace Unity.Behavior
             return false;
         }
 
-        private BlackboardVariable GetTargetVariable(BehaviorGraphAgent agent, SerializableGUID variableID)
+        private BlackboardVariable GetTargetVariable(BehaviorGraphAgentBase agent, SerializableGUID variableID)
         {
             // If the application is playing, use the runtime graph's blackboard.
             agent.Graph.BlackboardReference.GetVariable(variableID, out BlackboardVariable runtimeVariableInstance);
@@ -809,7 +812,7 @@ namespace Unity.Behavior
             return runtimeVariableInstance;
         }
 
-        private void SetBlackboardVariableValue<DataType>(BehaviorGraphAgent agent, BlackboardVariable refVariable, DataType newValue)
+        private void SetBlackboardVariableValue<DataType>(BehaviorGraphAgentBase agent, BlackboardVariable refVariable, DataType newValue)
         {
             if (Application.isPlaying)
             {
@@ -851,7 +854,7 @@ namespace Unity.Behavior
 
         private void ResetVariable(SerializableGUID guid)
         {
-            foreach (BehaviorGraphAgent targetAgent in m_TargetAgents)
+            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 if (targetAgent.m_BlackboardOverrides.ContainsKey(guid))
                 {
