@@ -8,9 +8,6 @@ namespace Unity.Behavior
     [AddComponentMenu("Behavior Graph/Simple Behavior Agent")]
     public class SimpleBehaviorGraphAgent : BehaviorGraphAgentBase
     {
-        protected override BehaviorGraph GetGraphInstance()
-        {
-            return Graph;
-        }
+        
     }
 }
