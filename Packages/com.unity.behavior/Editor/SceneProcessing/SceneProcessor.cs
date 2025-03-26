@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Unity.Behavior.SceneProcessing
 {
-    public class SceneProcessor: IProcessSceneWithReport 
+    public class SceneProcessor : IProcessSceneWithReport 
     {
         public int callbackOrder { get; }
         public void OnProcessScene(UnityEngine.SceneManagement.Scene scene, BuildReport report)
         {
-            var behaviorGraphAgents = Object.FindObjectsByType<BehaviorGraphAgent>(FindObjectsSortMode.None);
+            var behaviorGraphAgents = Object.FindObjectsByType<BehaviorGraphAgentBase>(FindObjectsSortMode.None);
             foreach (var behaviorGraphAgent in behaviorGraphAgents)
             {
                 if (behaviorGraphAgent.Graph)

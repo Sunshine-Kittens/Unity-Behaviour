@@ -51,7 +51,7 @@ namespace Unity.Behavior
         private static readonly string k_PrefsKeyEdgeTutorialShown = "EdgeTutorialShown";
         private bool IsInEditorContext => panel?.contextType == ContextType.Editor;
 
-        private BehaviorGraphAgent m_SelectedAgent;
+        private BehaviorGraphAgentBase m_SelectedAgent;
         private DebugAgentElement m_DebugElement;
         
         private int m_PlaceholderNodeIndex;
@@ -372,16 +372,16 @@ namespace Unity.Behavior
         private void OnDebugButtonClicked()
         {
 #if UNITY_2022_2_OR_NEWER
-            BehaviorGraphAgent[] agents = UnityEngine.Object.FindObjectsByType<BehaviorGraphAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            BehaviorGraphAgentBase[] agents = UnityEngine.Object.FindObjectsByType<BehaviorGraphAgentBase>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 #else
-            BehaviorGraphAgent[] agents = UnityEngine.Object.FindObjectsOfType<BehaviorGraphAgent>(true);
+            BehaviorGraphAgentBase[] agents = UnityEngine.Object.FindObjectsOfType<BehaviorGraphAgentBase>(true);
 #endif
             if (agents == null)
                 return;
             
             List<SearchView.Item> searchItems = new List<SearchView.Item>();
-            List<BehaviorGraphAgent> matchingAgents = new List<BehaviorGraphAgent>();
-            foreach (BehaviorGraphAgent agent in agents)
+            List<BehaviorGraphAgentBase> matchingAgents = new List<BehaviorGraphAgentBase>();
+            foreach (BehaviorGraphAgentBase agent in agents)
             {
                 if (!agent.Graph || agent.Graph.RootGraph == null)
                 {
@@ -439,7 +439,7 @@ namespace Unity.Behavior
 
         private void OnDebugTargetSelected(SearchView.Item obj)
         {
-            if (obj.Data is (BehaviorGraphAgent agent, BehaviorGraphModule graphModule))
+            if (obj.Data is (BehaviorGraphAgentBase agent, BehaviorGraphModule graphModule))
             {
                SetupDebugTarget(agent);
                BehaviorGraphView.ActiveDebugGraph = graphModule;
@@ -458,7 +458,7 @@ namespace Unity.Behavior
         }
 #endif
 
-        private void SetupDebugTarget(BehaviorGraphAgent agent)
+        private void SetupDebugTarget(BehaviorGraphAgentBase agent)
         {
             if (agent == null || !agent.Graph || agent.Graph.RootGraph == null)
             {
@@ -907,19 +907,19 @@ namespace Unity.Behavior
 
         internal void SetActiveGraphToDebugAgent(int agentId)
         {
-            BehaviorGraphAgent agent = GetDebugAgentInScene(agentId);
+            BehaviorGraphAgentBase agent = GetDebugAgentInScene(agentId);
             SetupDebugTarget(agent);            
         }
 
-        private BehaviorGraphAgent GetDebugAgentInScene(int id)
+        private BehaviorGraphAgentBase GetDebugAgentInScene(int id)
         {
             if (id == 0)
                  return null;
 
 #if UNITY_2022_2_OR_NEWER
-            var agents = UnityEngine.Object.FindObjectsByType<BehaviorGraphAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var agents = UnityEngine.Object.FindObjectsByType<BehaviorGraphAgentBase>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 #else
-            var agents = UnityEngine.Object.FindObjectsOfType<BehaviorGraphAgent>(true);
+            var agents = UnityEngine.Object.FindObjectsOfType<BehaviorGraphAgentBase>(true);
 #endif
             foreach (var agent in agents)
             {
