@@ -21,7 +21,7 @@ namespace Unity.Behavior
         static void HandleDropOnObject(GameObject gameObject)
         {
             BehaviorAuthoringGraph behaviorAuthoringGraph = DragAndDrop.objectReferences[0] as BehaviorAuthoringGraph;
-            var behaviorGraphAgent = gameObject.GetComponent<BehaviorGraphAgentBase>();
+            var behaviorGraphAgent = gameObject.GetComponent<BehaviorGraphAgent>();
             if (behaviorGraphAgent == null)
             {
                 behaviorGraphAgent = gameObject.AddComponent<BehaviorGraphAgent>();
