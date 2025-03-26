@@ -252,7 +252,7 @@ namespace Unity.Behavior
                 return false;
             }
 
-            if (m_Graph.RootGraph.GetVariable(variableName, out variable))
+            if (m_Graph.m_RootGraph.GetVariable(variableName, out variable))
             {
                 return true;
             }
@@ -286,7 +286,7 @@ namespace Unity.Behavior
                 return false;
             }
 
-            if (m_Graph.RootGraph.GetVariable(variableName, out variable))
+            if (m_Graph.m_RootGraph.GetVariable(variableName, out variable))
             {
                 return true;
             }
@@ -319,7 +319,7 @@ namespace Unity.Behavior
                 return false;
             }
 
-            if (m_Graph.RootGraph.GetVariable(guid, out variable))
+            if (m_Graph.m_RootGraph.GetVariable(guid, out variable))
             {
                 return true;
             }
@@ -353,7 +353,7 @@ namespace Unity.Behavior
                 return false;
             }
 
-            if (m_Graph.RootGraph.GetVariable(guid, out variable))
+            if (m_Graph.m_RootGraph.GetVariable(guid, out variable))
             {
                 return true;
             }
@@ -377,7 +377,7 @@ namespace Unity.Behavior
                 return TryGetBlackboardVariableGUIDOverride(variableName, out id);
             }
             
-            if (m_Graph.RootGraph.GetVariableID(variableName, out id))
+            if (m_Graph.m_RootGraph.GetVariableID(variableName, out id))
             {
                 return true;
             }
@@ -407,7 +407,7 @@ namespace Unity.Behavior
                 return TrySetBlackboardVariableOverride(variableName, value);
             }
 
-            m_Graph.RootGraph?.SetVariableValue(variableName, value);
+            m_Graph.m_RootGraph?.SetVariableValue(variableName, value);
 
             foreach (var behaviorGraphModule in m_Graph.Graphs)
             {
@@ -434,7 +434,7 @@ namespace Unity.Behavior
                 return TrySetBlackboardVariableOverride(guid, value);
             }
 
-            m_Graph.RootGraph?.SetVariableValue(guid, value);
+            m_Graph.m_RootGraph?.SetVariableValue(guid, value);
 
             foreach (var behaviorGraphModule in m_Graph.Graphs)
             {

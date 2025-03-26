@@ -38,7 +38,7 @@ namespace Unity.Behavior
                 string assetPath = AssetDatabase.GetAssetPath(m_SharedGraph);
                 if (string.IsNullOrEmpty(assetPath))
                 {
-                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
+                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.m_RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
                     {
                         SharedAuthoringGraph = sharedAuthoringGraph;
                     }
@@ -208,7 +208,7 @@ namespace Unity.Behavior
                     {
                         DragAndDrop.AcceptDrag();
                         var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(authoringGraph);
-                        if (runtimeGraph?.RootGraph == null)
+                        if (runtimeGraph?.m_RootGraph == null)
                         {
                             authoringGraph.BuildRuntimeGraph();
                         }
@@ -760,7 +760,7 @@ namespace Unity.Behavior
 
             // If the graph isn't enabled, the asset contains no data and the asset link cannot be updated.
             // Likewise, if the asset reference is null, the asset has been deleted and the link cannot be updated.
-            BehaviorGraphAssetRegistry.TryGetAssetFromId(targetAgent.Graph.RootGraph.AuthoringAssetID, out BehaviorAuthoringGraph asset);
+            BehaviorGraphAssetRegistry.TryGetAssetFromId(targetAgent.Graph.m_RootGraph.AuthoringAssetID, out BehaviorAuthoringGraph asset);
             if (ReferenceEquals(asset, null))
             {
                 Debug.LogWarning($"Behavior graph reference lost on {targetAgent}.", targetAgent);
@@ -788,8 +788,8 @@ namespace Unity.Behavior
 
             // The two have assigned instances that are copies of a shared asset.
             if (agent.Graph && otherAgent.Graph
-                            && agent.Graph.RootGraph.AuthoringAssetID == otherAgent.Graph.RootGraph.AuthoringAssetID
-                            && agent.Graph.RootGraph.VersionTimestamp == otherAgent.Graph.RootGraph.VersionTimestamp)
+                            && agent.Graph.m_RootGraph.AuthoringAssetID == otherAgent.Graph.m_RootGraph.AuthoringAssetID
+                            && agent.Graph.m_RootGraph.VersionTimestamp == otherAgent.Graph.m_RootGraph.VersionTimestamp)
                 return true;
 
             return false;
