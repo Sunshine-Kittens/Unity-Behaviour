@@ -13,7 +13,7 @@ namespace Unity.Behavior
         icon: "Icons/Sequence",
         category: "Flow",
         id: "dfd2a5f53dc54b8dad31dc3f7a794079")]
-    internal partial class SequenceComposite : Composite
+    public partial class SequenceComposite : Composite
     {
         [CreateProperty] int m_CurrentChild;
 
