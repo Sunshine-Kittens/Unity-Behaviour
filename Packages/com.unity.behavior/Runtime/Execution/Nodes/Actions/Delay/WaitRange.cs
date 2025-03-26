@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Wait between [Min] and [Max] seconds",
         category: "Action/Delay",
         id: "bafd6d03f579d512ad4d1ce6e66725d9")]
-    public partial class WaitRangeAction : Action
+    internal partial class WaitRangeAction : Action
     {
         [SerializeReference] public BlackboardVariable<float> Min = new BlackboardVariable<float>(1);
         [SerializeReference] public BlackboardVariable<float> Max = new BlackboardVariable<float>(3);

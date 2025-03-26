@@ -5,7 +5,7 @@ using Unity.Properties;
 namespace Unity.Behavior
 {
     [Serializable]
-    public abstract class WaitForPhysicsMessageAction : Action
+    internal abstract class WaitForPhysicsMessageAction : Action
     {
         public enum EMessageType
         {

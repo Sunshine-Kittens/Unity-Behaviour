@@ -13,7 +13,7 @@ namespace Unity.Behavior
         story: "[Agent] navigates to [Target]",
         category: "Action/Navigation",
         id: "3bc19d3122374cc9a985d90351633310")]
-    public partial class NavigateToTargetAction : Action
+    internal partial class NavigateToTargetAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<GameObject> Target;

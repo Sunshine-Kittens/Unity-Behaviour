@@ -18,11 +18,11 @@ namespace Unity.Behavior
     {
         [SerializeField]
         [HideInInspector]
-        public long VersionTimestamp;
+        internal long VersionTimestamp;
 
         [HideInInspector]
         [SerializeField]
-        public SerializableGUID AssetID;
+        internal SerializableGUID AssetID;
 
         [SerializeField]
         private Blackboard m_Blackboard;
@@ -35,7 +35,7 @@ namespace Unity.Behavior
         [SerializeField]
         private List<SerializableGUID> m_SharedBlackboardVariableGuids = new List<SerializableGUID>();
 
-        public HashSet<SerializableGUID> m_SharedBlackboardVariableGuidHashset = new HashSet<SerializableGUID>();
+        internal HashSet<SerializableGUID> m_SharedBlackboardVariableGuidHashset = new HashSet<SerializableGUID>();
 
 #if UNITY_EDITOR
         /// <summary>
@@ -130,7 +130,7 @@ namespace Unity.Behavior
 
 #endif
 
-        public bool IsSharedVariable(SerializableGUID guid)
+        internal bool IsSharedVariable(SerializableGUID guid)
         {
             return m_SharedBlackboardVariableGuidHashset.Contains(guid);
         }

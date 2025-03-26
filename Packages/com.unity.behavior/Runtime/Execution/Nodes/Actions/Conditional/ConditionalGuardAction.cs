@@ -14,7 +14,7 @@ namespace Unity.Behavior
         description: "Allows flow to pass only if the specified condition(s) are met.", 
         category: "Action/Conditional", 
         id: "d6079f431e4784966a3969d414151638")]
-    public partial class ConditionalGuardAction : Action, IConditional
+    internal partial class ConditionalGuardAction : Action, IConditional
     {
         [SerializeReference]
         protected List<Condition> m_Conditions = new List<Condition>();

@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/Transform",
         description: "Rotates the transform by an Euler rotation, with an optional duration to rotate over time.",
         id: "10eeb1c8b93f5a9c7ae096bfeed39c62")]
-    public partial class RotateEulerAction : Action
+    internal partial class RotateEulerAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Vector3> Rotation;

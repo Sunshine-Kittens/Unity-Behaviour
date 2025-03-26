@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Time out after [Duration] seconds", 
         category: "Flow",
         id: "a6394ca78d6f93415c22fb52c9d5577c")]
-    public partial class TimeOutModifier : Modifier
+    internal partial class TimeOutModifier : Modifier
     {
         [SerializeReference] public BlackboardVariable<float> Duration;
         [CreateProperty] private float m_Timer = 0.0f;

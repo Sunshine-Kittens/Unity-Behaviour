@@ -13,7 +13,7 @@ namespace Unity.Behavior
         story: "Cooldowns for [duration] seconds after execution",
         category: "Flow",
         id: "a9ff45a058927aa68b4328a5daf34161")]
-    public partial class CooldownModifier : Modifier
+    internal partial class CooldownModifier : Modifier
     {
         [SerializeReference] public BlackboardVariable<float> Duration;
         [CreateProperty] private float m_CooldownRemainingTime;

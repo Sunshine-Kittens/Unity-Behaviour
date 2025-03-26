@@ -11,7 +11,7 @@ namespace Unity.Behavior
         description: "Attaches a GameObject to another GameObject with an offset.\n\n" +
         "This is done by assigning the GameObject's transform parent to the target.",
         id: "6ef37426dfc4b8cc84b6f36507e03824")]
-    public partial class AttachObjectAction : Action
+    internal partial class AttachObjectAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Object;
         [Tooltip("If no target is provided, set the parent transform of the GameObject to null.")]

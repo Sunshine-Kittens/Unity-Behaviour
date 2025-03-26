@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Unity.Behavior
 {
     [Serializable]
-    public class ComponentToGameObjectBlackboardVariable<SourceType> : BlackboardVariableCaster<SourceType, GameObject>
+    internal class ComponentToGameObjectBlackboardVariable<SourceType> : BlackboardVariableCaster<SourceType, GameObject>
         where SourceType : Component
     {
         protected override SourceType GetSourceObjectFromTarget(GameObject value) => value != null ? value.GetComponent<SourceType>() : null;

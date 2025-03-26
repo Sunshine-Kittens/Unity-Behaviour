@@ -13,15 +13,15 @@ namespace Unity.Behavior
         /// <summary>
         /// the parent of the node.
         /// </summary>
-        public Node Parent { get => m_Parent; set { m_Parent = value; } }
+        public Node Parent { get => m_Parent; internal set { m_Parent = value; } }
         [SerializeReference]
-        public Node m_Parent;
+        internal Node m_Parent;
 
         /// <summary>
         /// the child of the node.
         /// </summary>
         [CreateProperty]
-        public Node Child { get => m_Child; set => m_Child = value; }
+        public Node Child { get => m_Child; internal set => m_Child = value; }
         // Must be protected to avoid reflection in the property bag
         // - see EditMode test NodePropertyBagPropertiesAreGeneratedAndNotReflection.
         [SerializeReference, DontCreateProperty]

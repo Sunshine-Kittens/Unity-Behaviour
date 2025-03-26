@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior
 {
-    public class BehaviorGraphDebugInfo : ScriptableObject, ISerializationCallbackReceiver
+    internal class BehaviorGraphDebugInfo : ScriptableObject, ISerializationCallbackReceiver
     {
         private HashSet<SerializableGUID> m_CodeBreakPoints = new HashSet<SerializableGUID>();
         
@@ -22,13 +22,13 @@ namespace Unity.Behavior
             m_CodeBreakPointsList = new List<SerializableGUID>(m_CodeBreakPoints);
         }
 
-        public bool IsNodeBreakpointEnabled(SerializableGUID nodeID)
+        internal bool IsNodeBreakpointEnabled(SerializableGUID nodeID)
         {
             return m_CodeBreakPoints.Contains(nodeID);
         }
 
 #if UNITY_EDITOR
-        public void ToggleNodeBreakpoint(SerializableGUID nodeID)
+        internal void ToggleNodeBreakpoint(SerializableGUID nodeID)
         {
             if (m_CodeBreakPoints.Contains(nodeID))
             {

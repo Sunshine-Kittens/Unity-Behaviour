@@ -8,7 +8,7 @@ namespace Unity.Behavior
         description: "Runs the assigned subgraph and returns the graph's final status.",
         category: "Subgraphs",
         id: "99ca68fd9e704c8abdaacf6697e42a4a")]
-    public partial class RunSubgraph : Action
+    internal partial class RunSubgraph : Action
     {
         [SerializeReference] public BehaviorGraphModule Subgraph;
 

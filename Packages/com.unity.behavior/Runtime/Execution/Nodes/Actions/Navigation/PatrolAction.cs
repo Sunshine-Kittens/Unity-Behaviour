@@ -14,7 +14,7 @@ namespace Unity.Behavior
         category: "Action/Navigation",
         story: "[Agent] patrols along [Waypoints]",
         id: "f0cd1414cf8e67c47214e54fc922c793")]
-    public partial class PatrolAction : Action
+    internal partial class PatrolAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<List<GameObject>> Waypoints;

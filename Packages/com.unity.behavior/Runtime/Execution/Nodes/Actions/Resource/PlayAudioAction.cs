@@ -16,7 +16,7 @@ namespace Unity.Behavior
         "\nIt is possible to choose to spawn the AudioSource on either the Target itself or as a new empty GameObject." +
         "\nResource are internally pooled and shared across all [Play Audio] nodes."
         )]
-    public partial class PlayAudioAction : Action
+    internal partial class PlayAudioAction : Action
     {
         private static Stack<AudioSource> s_SharedPool = null;
 

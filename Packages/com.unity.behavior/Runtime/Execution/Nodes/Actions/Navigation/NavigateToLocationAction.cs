@@ -13,7 +13,7 @@ namespace Unity.Behavior
         story: "[Agent] navigates to [Location]",
         category: "Action/Navigation",
         id: "c67c5c55de9fe94897cf61976250cc83")]
-    public partial class NavigateToLocationAction : Action
+    internal partial class NavigateToLocationAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<Vector3> Location;

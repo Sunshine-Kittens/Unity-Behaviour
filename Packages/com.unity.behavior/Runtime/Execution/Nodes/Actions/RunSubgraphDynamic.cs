@@ -6,11 +6,11 @@ using UnityEngine;
 namespace Unity.Behavior
 {
     [Serializable, GeneratePropertyBag]
-    public partial class RunSubgraphDynamic : Action
+    internal partial class RunSubgraphDynamic : Action
     {
         [SerializeReference] public BlackboardVariable<BehaviorGraph> SubgraphVariable;
         
-        public BehaviorGraph Subgraph => SubgraphVariable.Value;
+        internal BehaviorGraph Subgraph => SubgraphVariable.Value;
         [SerializeReference] public RuntimeBlackboardAsset RequiredBlackboard;
         [SerializeReference] public List<DynamicBlackboardVariableOverride> DynamicOverrides;
         private BehaviorGraph m_InitializedGraph = null;

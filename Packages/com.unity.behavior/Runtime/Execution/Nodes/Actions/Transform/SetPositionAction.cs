@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/Transform",
         description: "Sets the target's position to a specific location.",
         id: "4e73d3459af87461a8891aa77fe75006")]
-    public partial class SetPositionAction : Action
+    internal partial class SetPositionAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Vector3> Location;

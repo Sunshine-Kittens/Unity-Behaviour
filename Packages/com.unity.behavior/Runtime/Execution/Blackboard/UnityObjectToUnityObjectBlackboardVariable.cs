@@ -4,7 +4,7 @@ using System;
 namespace Unity.Behavior
 {
     [Serializable]
-    public class UnityObjectToUnityObjectBlackboardVariable<SourceType, TargetType> : BlackboardVariable<TargetType>
+    internal class UnityObjectToUnityObjectBlackboardVariable<SourceType, TargetType> : BlackboardVariable<TargetType>
         where SourceType : UnityEngine.Object where TargetType : UnityEngine.Object
     {
         [SerializeReference]

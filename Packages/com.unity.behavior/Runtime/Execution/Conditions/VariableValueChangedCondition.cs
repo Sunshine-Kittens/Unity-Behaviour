@@ -9,7 +9,7 @@ namespace Unity.Behavior
         category: "Variable Conditions",
         story: "[Variable] has changed",
         id: "81244bae408bf0ba83e9723fe4be4299")]
-    public class VariableValueChangedCondition : Condition
+    internal class VariableValueChangedCondition : Condition
     {
         [SerializeReference] public BlackboardVariable Variable;
         private bool HasVariableChanged;

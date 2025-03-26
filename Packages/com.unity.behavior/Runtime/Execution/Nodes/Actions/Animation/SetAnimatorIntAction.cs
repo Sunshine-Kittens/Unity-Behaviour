@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Set [Parameter] in [Animator] to [Value]",
         category: "Action/Animation",
         id: "33f8bb6a3f9bc4606c6613be45ad704f")]
-    public partial class SetAnimatorIntAction : Action
+    internal partial class SetAnimatorIntAction : Action
     {
         [SerializeReference] public BlackboardVariable<string> Parameter;
         [SerializeReference] public BlackboardVariable<Animator> Animator;

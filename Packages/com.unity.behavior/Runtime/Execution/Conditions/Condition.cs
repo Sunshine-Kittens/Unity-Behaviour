@@ -35,6 +35,6 @@ namespace Unity.Behavior
         /// The BehaviorGraph containing the node instance.
         /// </summary>
         [SerializeReference]
-        public BehaviorGraphModule Graph;
+        internal BehaviorGraphModule Graph;
     }
 }

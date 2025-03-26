@@ -12,7 +12,7 @@ namespace Unity.Behavior
         category: "Action/Scene",
         description: "Unloads a Unity scene.",
         id: "8da34c59581ad18979662407729f9a7e")]
-    public partial class UnloadSceneAction : Action
+    internal partial class UnloadSceneAction : Action
     {
         [Tooltip("The given Scene name can either be the full Scene path, the path shown in the Build Settings window or just the Scene name. " +
             "\nIf only the Scene name is given this will unload the first Scene in the list that matches.")]

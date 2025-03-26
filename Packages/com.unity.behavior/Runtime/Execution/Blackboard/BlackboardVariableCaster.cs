@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Unity.Behavior
 {
-    public interface IBlackboardVariableCast
+    internal interface IBlackboardVariableCast
     {
         public string SourceTypeName { get; }
         public string TargetTypeName { get; }
     }
 
     [Serializable]
-    public abstract class BlackboardVariableCaster<SourceType, TargetType> : BlackboardVariable<TargetType>, IBlackboardVariableCast
+    internal abstract class BlackboardVariableCaster<SourceType, TargetType> : BlackboardVariable<TargetType>, IBlackboardVariableCast
         where SourceType : UnityEngine.Object
         where TargetType : UnityEngine.Object
     {

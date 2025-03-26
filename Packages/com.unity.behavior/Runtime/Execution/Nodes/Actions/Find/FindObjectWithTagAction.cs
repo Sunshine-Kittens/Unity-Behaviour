@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Find [Object] with tag: [Tag]",
         category: "Action/Find",
         id: "c83ba0235980a2a0ff12705e1f4fdcea")]
-    public partial class FindObjectWithTagAction : Action
+    internal partial class FindObjectWithTagAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Object;
         [SerializeReference] public BlackboardVariable<string> Tag;

@@ -11,7 +11,7 @@ namespace Unity.Behavior
         story: "Wait for [SecondsToWait] seconds",
         category: "Action/Delay",
         id: "0d783cab60fd446bb4d768334502687a")]
-    public partial class WaitAction : Action
+    internal partial class WaitAction : Action
     {
         [SerializeReference] public BlackboardVariable<float> SecondsToWait;
         [CreateProperty] private float m_Timer = 0.0f;

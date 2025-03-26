@@ -14,16 +14,16 @@ namespace Unity.Behavior
         /// <summary>
         /// The parent of the node.
         /// </summary>
-        public Node Parent { get => m_Parent; set { m_Parent = value; } }
+        public Node Parent { get => m_Parent; internal set { m_Parent = value; } }
         [SerializeReference]
-        public Node m_Parent;
+        internal Node m_Parent;
 
         /// <summary>
         /// The children of the node.
         /// </summary>
-        public List<Node> Children { get => m_Children; set => m_Children = value; }
+        public List<Node> Children { get => m_Children; internal set => m_Children = value; }
         [SerializeReference]
-        public List<Node> m_Children = new List<Node>();
+        internal List<Node> m_Children = new List<Node>();
 
         /// <inheritdoc cref="ResetStatus" />
         public override void ResetStatus()
@@ -48,7 +48,7 @@ namespace Unity.Behavior
             child?.AddParent(this);
         }
 
-        public void Insert(int index, Node child)
+        internal void Insert(int index, Node child)
         {
             Children.Insert(index, child);
             child?.AddParent(this);

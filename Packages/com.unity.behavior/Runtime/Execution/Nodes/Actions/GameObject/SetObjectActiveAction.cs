@@ -11,7 +11,7 @@ namespace Unity.Behavior
         description: "Sets the active state of a GameObject.",
         story: "Set [Object] state to: [Active]",
         id: "634fab3048befb7df4b56527d8d76eee")]
-    public partial class SetObjectActiveAction : Action
+    internal partial class SetObjectActiveAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Object;
         [SerializeReference] public BlackboardVariable<bool> Active;

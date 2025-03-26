@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/Transform",
         description: "Translates the target's position by a specific amount.",
         id: "641099f73569719a8e142b690bb09da7")]
-    public partial class TranslateAction : Action
+    internal partial class TranslateAction : Action
     {
         [SerializeReference] public BlackboardVariable<Transform> Transform;
         [SerializeReference] public BlackboardVariable<Vector3> TranslateValue;

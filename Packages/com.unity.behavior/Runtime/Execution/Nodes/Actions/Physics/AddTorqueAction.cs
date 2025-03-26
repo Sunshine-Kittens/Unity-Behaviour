@@ -11,7 +11,7 @@ namespace Unity.Behavior
         category: "Action/Physics",
         description: "Applies torque to the target Rigidbody.",
         id: "eeae23a7831be63cc6c7b0f007e5d5f2")]
-    public partial class AddTorqueAction : Action
+    internal partial class AddTorqueAction : Action
     {
         [SerializeReference] public BlackboardVariable<Rigidbody> Target;
         [SerializeReference] public BlackboardVariable<Vector3> TorqueValue;

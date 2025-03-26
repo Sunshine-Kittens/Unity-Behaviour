@@ -13,10 +13,10 @@ namespace Unity.Behavior
         icon: "Icons/Sequence",
         category: "Flow/Conditional",
         id: "ef072beedcccd16ac0cd3cb5295fe4cd")]
-    public partial class SwitchComposite : Composite
+    internal partial class SwitchComposite : Composite
     {
         // The returned status when no node is attached to the desired port.
-        public Status DefaultStatus = Status.Success;
+        internal Status DefaultStatus = Status.Success;
 
         [SerializeReference] public BlackboardVariable EnumVariable;
         [CreateProperty]

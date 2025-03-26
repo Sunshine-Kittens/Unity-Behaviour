@@ -11,7 +11,7 @@ namespace Unity.Behavior
         description: "Applies physics force to target Rigidbody.",
         category: "Action/Physics",
         id: "2c889157ee1f5446e7f4fbe05ef4f0bb")]
-    public partial class AddForceAction : Action
+    internal partial class AddForceAction : Action
     {
         [SerializeReference] public BlackboardVariable<Rigidbody> Target;
         [SerializeReference] public BlackboardVariable<Vector3> ForceValue;

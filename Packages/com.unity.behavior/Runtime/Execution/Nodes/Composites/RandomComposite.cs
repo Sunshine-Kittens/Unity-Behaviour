@@ -14,7 +14,7 @@ namespace Unity.Behavior
         icon: "Icons/random", 
         category: "Flow", 
         id: "3ec329cc9c414fd88aa9113e7c422f1a")]
-    public partial class RandomComposite : Composite
+    internal partial class RandomComposite : Composite
     {
         int m_RandomIndex = 0;
 

@@ -21,7 +21,7 @@ namespace Unity.Behavior
         [SerializeReference]
         private RuntimeBlackboardAsset m_Source;
 
-        public RuntimeBlackboardAsset SourceBlackboardAsset
+        internal RuntimeBlackboardAsset SourceBlackboardAsset
         {
             get => m_Source;
             set
