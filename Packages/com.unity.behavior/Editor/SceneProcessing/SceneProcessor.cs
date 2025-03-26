@@ -15,7 +15,7 @@ namespace Unity.Behavior.SceneProcessing
             {
                 if (behaviorGraphAgent.Graph)
                 {
-                    behaviorGraphAgent.Init();
+                    behaviorGraphAgent.InitGraph();
                     
 #if UNITY_TEST_FRAMEWORK
                     behaviorGraphAgent.m_InitialisedFromAssetProcessor = true;

@@ -144,7 +144,7 @@ namespace Unity.Behavior
 
         private void Awake()
         {
-            Init();
+            InitGraph();
         }
 
         private void OnAssignBehaviorGraph()
@@ -289,7 +289,7 @@ namespace Unity.Behavior
         /// agent.SetVariableValue("TargetPosition", GetRandomPosition());  // Sets instance variable
         /// </code>
         /// </example>
-        public void Init()
+        public void InitGraph()
         {
             if (m_Graph == null)
             {
@@ -316,20 +316,12 @@ namespace Unity.Behavior
                 m_OriginalGraph = m_Graph;
             }
 #endif
-            //m_Graph = ScriptableObject.Instantiate(m_Graph);
-            m_Graph = GetGraphInstance();
+            m_Graph = ScriptableObject.Instantiate(m_Graph);
             m_Graph.AssignGameObjectToGraphModules(gameObject);
             InitChannelsAndMetadata();
             m_IsInitialised = true;
             m_IsStarted = false;
         }
-
-        /// <summary>
-        /// Returns an instance of the behaviour graph.
-        /// This may be a new unique copy for typical AI behaviour graphs, or simply return a reference
-        /// to the currently set graph if it is shared and not expected to be run in parallel.
-        /// </summary>
-        protected abstract BehaviorGraph GetGraphInstance();
 
         /// <summary>
         /// Gets a variable associated with the specified name and value type. For values of type subclassed from
@@ -655,7 +647,7 @@ namespace Unity.Behavior
 
             if (!m_IsInitialised)
             {
-                Init();
+                InitGraph();
                 // If the graph was invalid, it would be cleared by now.
                 if (m_Graph == null)
                 {
@@ -710,7 +702,7 @@ namespace Unity.Behavior
             {
                 // The graph needs initialising and then starting. The user asked to do it this frame so we do it here
                 // instead of waiting for Update().
-                Init();
+                InitGraph();
                 // If the graph was invalid, it would be cleared by now.
                 if (m_Graph == null)
                 {
@@ -738,7 +730,7 @@ namespace Unity.Behavior
             
             if (!m_IsInitialised)
             {
-                Init();
+                InitGraph();
             }
 
             if (!m_IsStarted)
