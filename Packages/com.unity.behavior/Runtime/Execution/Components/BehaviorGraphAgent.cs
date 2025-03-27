@@ -13,6 +13,22 @@ namespace Unity.Behavior
             return ScriptableObject.Instantiate(Graph);
         }
 
+        /// <summary>
+        /// Begins execution of the agent's behavior graph.
+        /// </summary>
+        public void StartGraph()
+        {
+            _ = StartGraphInternal();
+        }
+
+        /// <summary>
+        /// Restarts the execution of the agent's behavior graph.
+        /// </summary>
+        public void RestartGraph()
+        {
+            _ = RestartGraphInternal();
+        }
+
         private void Start()
         {
             StartGraph();
