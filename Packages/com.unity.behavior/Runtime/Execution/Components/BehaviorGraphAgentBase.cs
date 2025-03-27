@@ -633,15 +633,7 @@ namespace Unity.Behavior
             }
 
             BlackboardReference.Blackboard.CreateMetadata();
-        }
-
-        /// <summary>
-        /// Begins execution of the agent's behavior graph.
-        /// </summary>
-        public void StartGraph()
-        {
-            _ = StartGraphInternal();
-        }
+        }        
 
         protected bool StartGraphInternal()
         {
@@ -694,15 +686,7 @@ namespace Unity.Behavior
             if (!IsOwner && NetcodeRunOnlyOnOwner) return;
 #endif
             m_Graph.End();
-        }
-
-        /// <summary>
-        /// Restarts the execution of the agent's behavior graph.
-        /// </summary>
-        public void RestartGraph()
-        {
-            _ = RestartGraphInternal();
-        }
+        }        
 
         protected bool RestartGraphInternal()
         {
