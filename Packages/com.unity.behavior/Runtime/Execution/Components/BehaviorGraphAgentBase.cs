@@ -621,28 +621,48 @@ namespace Unity.Behavior
 
         /// <summary>
         /// Begins execution of the agent's behavior graph.
+        /// Awaits the execution of the graph ending
+        /// </summary>
+        public async Awaitable StartGraphAsync()
+        {
+            if(StartGraphInternal())
+            {
+                while (m_Graph.IsRunning)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Begins execution of the agent's behavior graph.
         /// </summary>
         public void StartGraph()
         {
-            if (m_Graph == null) return;
+            _ = StartGraphInternal();
+        }
+
+        private bool StartGraphInternal()
+        {
+            if (m_Graph == null) return false;
 #if NETCODE_FOR_GAMEOBJECTS
-            if (!IsOwner && NetcodeRunOnlyOnOwner) return;
+            if (!IsOwner && NetcodeRunOnlyOnOwner) return false;
 #endif
 
             if (!isActiveAndEnabled)
             {
                 if (!m_IsInitialised)
                 {
-                    return;
+                    return false;
                 }
 
                 if (m_Graph.IsRunning)
                 {
-                    return;
+                    return false;
                 }
                 m_Graph.End();
                 m_IsStarted = false;
-                return;
+                return false;
             }
 
             if (!m_IsInitialised)
@@ -656,10 +676,11 @@ namespace Unity.Behavior
             }
             if (m_Graph.IsRunning)
             {
-                return;
+                return false;
             }
             m_Graph.Start();
             m_IsStarted = true;
+            return true;
         }
 
         /// <summary>
