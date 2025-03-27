@@ -422,7 +422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _agent: {fileID: 2050874679}
-  _graph1: {fileID: -5071018102669162757, guid: 3c38fcdf293c86044bb6c07c116622e2, type: 2}
+  _graph1: {fileID: 6292000661843100057, guid: 3c38fcdf293c86044bb6c07c116622e2, type: 2}
   _graph2: {fileID: -3556976866044571775, guid: 706e66803ba0eed4a9a4a13c623e00b7, type: 2}
 --- !u!1 &832575517
 GameObject:
@@ -502,13 +502,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e260c734b9d2ac64eaeaf1dd29c37f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Graph: {fileID: 0}
-  m_BlackboardVariableOverridesList: []
+  m_Graph: {fileID: -3556976866044571775, guid: 706e66803ba0eed4a9a4a13c623e00b7, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 829288558411382845
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 829288558411382845
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 2050874678}
 --- !u!4 &2050874680
 Transform:
   m_ObjectHideFlags: 0
