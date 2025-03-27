@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Unity.Behavior.GraphFramework;
 
@@ -84,6 +85,16 @@ namespace Unity.Behavior
             }
         }
 #endif
+
+        protected CancellationToken GraphCancellationToken
+        {
+            get
+            {
+                return m_CancellationTokenSource.Token;
+            }
+        }
+
+        private CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
 
         private void Awake()
         {
@@ -219,11 +230,17 @@ namespace Unity.Behavior
                 return;
             }
 
-            m_Graph = ScriptableObject.Instantiate(m_Graph);
+            //m_Graph = ScriptableObject.Instantiate(m_Graph);
+            m_Graph = GetGraphInstance();
             m_Graph.AssignGameObjectToGraphModules(gameObject);
             InitChannelsAndMetadata();
             m_IsInitialised = true;
         }
+
+        /// <summary>
+        /// Abstract method to retieve the correct instance of the behaviour graph during initialisation.
+        /// </summary>
+        protected abstract BehaviorGraph GetGraphInstance();
 
         /// <summary>
         /// Gets a variable associated with the specified name and value type. For values of type subclassed from
@@ -520,28 +537,13 @@ namespace Unity.Behavior
 
         /// <summary>
         /// Begins execution of the agent's behavior graph.
-        /// Awaits the execution of the graph ending
-        /// </summary>
-        public async Awaitable StartGraphAsync()
-        {
-            if(StartGraphInternal())
-            {
-                while (m_Graph.IsRunning)
-                {
-                    await Awaitable.NextFrameAsync();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Begins execution of the agent's behavior graph.
         /// </summary>
         public void StartGraph()
         {
             _ = StartGraphInternal();
         }
 
-        private bool StartGraphInternal()
+        protected bool StartGraphInternal()
         {
             if (m_Graph == null) return false;
 #if NETCODE_FOR_GAMEOBJECTS
@@ -594,13 +596,18 @@ namespace Unity.Behavior
         /// </summary>
         public void RestartGraph()
         {
+            _ = RestartGraphInternal();
+        }
+
+        protected bool RestartGraphInternal()
+        {
 #if NETCODE_FOR_GAMEOBJECTS
-            if (!IsOwner && NetcodeRunOnlyOnOwner) return;
+            if (!IsOwner && NetcodeRunOnlyOnOwner) return false;
 #endif
             if (m_Graph == null)
             {
                 Debug.LogError("Can't restart the agent because no graph has been assigned.", this);
-                return;
+                return false;
             }
 
             if (!isActiveAndEnabled)
@@ -610,7 +617,7 @@ namespace Unity.Behavior
                     m_Graph.End();
                 }
                 m_IsStarted = false;
-                return;
+                return false;
             }
 
             if (!m_IsInitialised)
@@ -620,10 +627,18 @@ namespace Unity.Behavior
                 InitGraph();
                 m_Graph.Start();
                 m_IsStarted = true;
-                return;
+                return true;
             }
+
+            if (m_Graph.IsRunning)
+            {
+                m_CancellationTokenSource.Cancel();
+                m_CancellationTokenSource = new CancellationTokenSource();
+            }
+
             m_Graph.Restart();
             m_IsStarted = true;
+            return true;
         }
 
         /// <summary>

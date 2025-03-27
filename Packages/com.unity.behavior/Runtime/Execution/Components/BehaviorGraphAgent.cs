@@ -8,6 +8,11 @@ namespace Unity.Behavior
     [AddComponentMenu("AI/Behavior Agent")]
     public class BehaviorGraphAgent : BehaviorGraphAgentBase
     {
+        protected override BehaviorGraph GetGraphInstance()
+        {
+            return ScriptableObject.Instantiate(Graph);
+        }
+
         private void Start()
         {
             StartGraph();

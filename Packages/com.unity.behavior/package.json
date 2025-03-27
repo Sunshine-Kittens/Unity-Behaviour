@@ -1,7 +1,7 @@
 {
   "name": "com.unity.behavior",
   "displayName": "Behavior",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "unity": "6000.0",
   "unityRelease": "16f1",
   "description": "Unity Behavior is a graph-based tool to create and run behavior trees. Besides including a comprehensive library of pre-built nodes, the interface provides node customization options and real-time debugging. While fully functional on its own, a Unity Muse subscription enhances your experience by using large language models (LLM) to generate behavior trees from text prompts and create code for custom action nodes. This subscription, although optional, provides a powerful addition for those looking to accelerate their development process.\n\nA demo showcasing this package can be found in the Asset Store <a href=https://assetstore.unity.com/packages/templates/tutorials/behavior-demo-for-unity-298313>https://assetstore.unity.com/packages/templates/tutorials/behavior-demo-for-unity-298313</a>.",
