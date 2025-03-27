@@ -49,7 +49,10 @@ namespace Unity.Behavior
         [CreateProperty, SerializeReference]
         private Stack<Node> m_NodesToEnd = new Stack<Node>(1);
         [CreateProperty, SerializeReference]
-        private HashSet<Node> m_EndedNodes = new HashSet<Node>();
+        // A Serialized HashSet is not initialized correctly
+        //private HashSet<Node> m_EndedNodes = new HashSet<Node>();
+        private List<Node> m_EndedNodes = new List<Node>();
+
         internal bool IsEndingBranch { get; private set; } = false;
         [CreateProperty]
         private bool m_NodesChanged;
