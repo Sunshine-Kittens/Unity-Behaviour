@@ -25,7 +25,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="Node.AddParent" />
-        internal override void AddParent(Node parent)
+        protected internal override void AddParent(Node parent)
         {
             this.Parent = parent;
         }
