@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior
 {
-    public class BehaviorGraphDebugInfo : ScriptableObject, ISerializationCallbackReceiver
+    internal class BehaviorGraphDebugInfo : ScriptableObject, ISerializationCallbackReceiver
     {
         private HashSet<SerializableGUID> m_CodeBreakPoints = new HashSet<SerializableGUID>();
         

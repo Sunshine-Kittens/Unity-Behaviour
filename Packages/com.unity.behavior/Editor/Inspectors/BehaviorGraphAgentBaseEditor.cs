@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Unity.Behavior.GraphFramework;
-
 using UnityEditor;
-
 using UnityEditorInternal;
-
 using UnityEngine;
 
 namespace Unity.Behavior
@@ -22,6 +18,11 @@ namespace Unity.Behavior
         private readonly Dictionary<SerializableGUID, VariableModel> m_VariableGUIDToVariableModel = new Dictionary<SerializableGUID, VariableModel>();
         private long m_MappedBlackboardVersion = 0;
         private BehaviorGraph m_SharedGraph;
+        bool m_ModificationsMade = false;
+
+        private BehaviorGraphAgentBase m_TargetAgent;
+        private SerializableGUID m_CurrentGraphID;
+        private SerializedProperty m_GraphProperty;
 
         private BehaviorGraph SharedGraph
         {
@@ -38,7 +39,7 @@ namespace Unity.Behavior
                 string assetPath = AssetDatabase.GetAssetPath(m_SharedGraph);
                 if (string.IsNullOrEmpty(assetPath))
                 {
-                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.m_RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
+                    if (BehaviorGraphAssetRegistry.TryGetAssetFromId(m_SharedGraph.RootGraph.AuthoringAssetID, out var sharedAuthoringGraph))
                     {
                         SharedAuthoringGraph = sharedAuthoringGraph;
                     }
@@ -81,36 +82,36 @@ namespace Unity.Behavior
             }
         }
 
-        // Note: Target.Graph is set to a non-persistent copy when the agent is has been initialized at runtime.
-        private bool HasRuntimeGraphAssetBeenDeleted(BehaviorGraphAgentBase agent) =>
-            !ReferenceEquals(agent.Graph, null) && !EditorUtility.IsPersistent(agent.Graph);
-
         private void OnEnable()
         {
+            if (target == null)
+            {
+                return;
+            }
+
             // Update the target agents and check for deleted runtime graph assets.
             m_TargetAgents.Clear();
             foreach (UnityEngine.Object objTarget in targets)
             {
                 var targetAgent = objTarget as BehaviorGraphAgentBase;
+                if (targetAgent == null) continue;
+
                 m_TargetAgents.Add(targetAgent);
                 UpdateBehaviorGraphIfNeeded(targetAgent);
             }
+
+            // We need the agent in order to set the Graph property in case of playmode assignment. 
+            m_TargetAgent = target as BehaviorGraphAgentBase;
+            m_GraphProperty = serializedObject.FindProperty("m_Graph");
+            Debug.Assert(m_GraphProperty != null);
+            var graph = m_GraphProperty.objectReferenceValue as BehaviorGraph;
+            m_CurrentGraphID = graph != null && graph.RootGraph != null ? graph.RootGraph.AuthoringAssetID : default;
         }
 
         private void FindSharedGraph()
         {
             // Use the first target to check for mixed values
-            BehaviorGraphAgentBase firstTarget = m_TargetAgents[0];
-            bool targetsShareGraph = true;
-            foreach (var targetAgent in m_TargetAgents)
-            {
-                if (!HaveSameGraph(targetAgent, firstTarget))
-                {
-                    targetsShareGraph = false;
-                    break;
-                }
-            }
-            SharedGraph = targetsShareGraph ? firstTarget.Graph : null;
+            SharedGraph = m_GraphProperty.hasMultipleDifferentValues ? null : m_GraphProperty.objectReferenceValue as BehaviorGraph;
         }
 
         private DataType GetVariableDataCopy<DataType>(BlackboardVariable<DataType> blackboardVariable)
@@ -129,38 +130,24 @@ namespace Unity.Behavior
             "NetcodeRunOnlyOnOwner"
         };
 
+
         public override void OnInspectorGUI()
         {
             DrawPropertiesExcluding(serializedObject, kPropertiesToExclude);
-            serializedObject.ApplyModifiedProperties();
-
-            FindSharedGraph();
             // Draw the graph field. If a new runtime graph is assigned, set the graph on the target and mark it dirty.
-            EditorGUI.BeginChangeCheck();
-            EditorGUI.showMixedValue = SharedGraph == null && targets.Length > 1;
-            var graph = EditorGUILayout.ObjectField("Behavior Graph", SharedGraph, typeof(BehaviorGraph), false) as BehaviorGraph;
-            if (EditorGUI.EndChangeCheck())
-            {
-                AssignGraphToAgents(graph);
-                SharedGraph = graph;
-            }
+            EditorGUILayout.PropertyField(m_GraphProperty, new GUIContent("Behavior Graph"));
             DetectAssetDragDrop();
 
 #if NETCODE_FOR_GAMEOBJECTS
-            EditorGUI.BeginChangeCheck();
-            BehaviorGraphAgentBase firstTarget = m_TargetAgents[0];
-            bool netcodeRunOnlyOnOwner = EditorGUILayout.Toggle("Netcode: Run only on Owner", firstTarget.NetcodeRunOnlyOnOwner);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
-                {
-                    Undo.RecordObject(targetAgent, "Toggle NetcodeRunOnlyOnOwner");
-                    targetAgent.NetcodeRunOnlyOnOwner = netcodeRunOnlyOnOwner;
-                }
-            }
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(BehaviorGraphAgentBase.NetcodeRunOnlyOnOwner)), new GUIContent("Netcode: Run only on Owner"));
 #endif
+            serializedObject.ApplyModifiedProperties();
 
+            // If the change was made in playmode, make sure the affected agent are calling the proper callbacks.
+            m_ModificationsMade |= DetectRuntimeGraphAssignment();
+
+            FindSharedGraph();
+            
             // Update overrides list before drawing the blackboard.
             foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
@@ -171,25 +158,42 @@ namespace Unity.Behavior
             }
 
             // Draw a blackboard only if all agents share the same graph and a blackboard for it exists.
-            if (SharedGraph != null && SharedGraph.BlackboardReference?.Blackboard != null && SharedGraph.BlackboardReference?.Blackboard != null)
+            if (SharedGraph != null && SharedGraph.BlackboardReference?.Blackboard != null)
             {
                 UpdateVariableModelMap();
                 DrawBlackboard(SharedGraph.BlackboardReference.Blackboard.Variables);
             }
+
+            if (m_ModificationsMade)
+            {
+                serializedObject.Update();
+                m_ModificationsMade = false;
+            }
         }
 
-        private void AssignGraphToAgents(BehaviorGraph graph)
+        private bool DetectRuntimeGraphAssignment()
         {
-            // Assign the new graph to all targets.
-            foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
+            if (!Application.isPlaying)
             {
-                if (graph == targetAgent.Graph)
-                {
-                    continue;
-                }
-                Undo.RecordObject(targetAgent, "Assign Graph");
-                targetAgent.Graph = graph;
+                return false;
             }
+
+            var graph = m_GraphProperty.objectReferenceValue as BehaviorGraph;
+            if (graph != null && m_CurrentGraphID != graph.RootGraph.AuthoringAssetID)
+            {
+                m_CurrentGraphID = graph.RootGraph.AuthoringAssetID;
+                // If we change the graph at runtime, there is a chain of callback that need to be triggered.
+                m_TargetAgent.Graph = graph;
+                return true;
+            }
+            else if (graph == null)
+            {
+                m_CurrentGraphID = default;
+                m_TargetAgent.Graph = null;
+                return true;
+            }
+
+            return false;
         }
 
         private bool DetectAssetDragDrop()
@@ -208,11 +212,11 @@ namespace Unity.Behavior
                     {
                         DragAndDrop.AcceptDrag();
                         var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(authoringGraph);
-                        if (runtimeGraph?.m_RootGraph == null)
+                        if (runtimeGraph?.RootGraph == null)
                         {
                             authoringGraph.BuildRuntimeGraph();
                         }
-                        AssignGraphToAgents(runtimeGraph);
+                        m_GraphProperty.boxedValue = runtimeGraph;
                         SharedGraph = runtimeGraph;
                         return true;
                     }
@@ -255,15 +259,19 @@ namespace Unity.Behavior
                     firstTargetVariable ??= targetVariable;
                     if (targetVariable == null)
                     {
-                        Debug.LogError($"Variable {variable.Name} not found in blackboard of {targetAgent}.", targetAgent);
-                        continue;
+                        return;
                     }
 
                     if (targetVariable.Name != variable.Name)
                     {
                         // The variable override exists, but its name may not be current if renamed in the asset.
                         targetVariable.Name = variable.Name;
+                        if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(targetAgent))
+                        {
+                            PrefabUtility.RecordPrefabInstancePropertyModifications(targetAgent);
+                        }
                         EditorUtility.SetDirty(targetAgent);
+                        serializedObject.Update();
                     }
 
                     // If any target's variable value differs from the first target's, show a mixed value indicator.
@@ -733,7 +741,7 @@ namespace Unity.Behavior
             foreach (BehaviorGraphAgentBase targetAgent in m_TargetAgents)
             {
                 BlackboardVariable targetVariable = GetTargetVariable(targetAgent, varID);
-                if (ReferenceEquals(targetVariable.ObjectValue, currentValue) || !targetVariable.Type.IsInstanceOfType(currentValue))
+                if (ReferenceEquals(targetVariable.ObjectValue, currentValue) || !targetVariable.Type.IsInstanceOfType(currentValue) && currentValue != null)
                 {
                     continue;
                 }
@@ -748,23 +756,40 @@ namespace Unity.Behavior
                 return; // Don't update the graph if the application is playing, as the graph instance is a copy.
             }
 
-            if (!HasRuntimeGraphAssetBeenDeleted(targetAgent))
-            {
-                return; // Don't make changes if the agent references a persistent asset.
-            }
+            var isMainAssetValid = targetAgent.Graph != null;
 
-            if (targetAgent.Graph == null)
+            if (!isMainAssetValid)
             {
                 return;
             }
 
-            // If the graph isn't enabled, the asset contains no data and the asset link cannot be updated.
+            // Note: Target.Graph is set to a non-persistent copy when the agent is has been initialized at runtime.
+            var isMainAssetPersistent = EditorUtility.IsPersistent(targetAgent.Graph);
+            var isRuntimeGraphValid = targetAgent.Graph.RootGraph != null;
+            if (isMainAssetPersistent && isRuntimeGraphValid)
+            {
+                return; // No change needed if the runtime graph of the persistent asset is still valid.
+            }
+
+            // At this point, we are dealing with a non persistent asset.
+            BehaviorAuthoringGraph asset = null;
+            // If root graph is still valid, let's try to get a hold of its referenced asset.
+            if (isRuntimeGraphValid)
+            {
+                BehaviorGraphAssetRegistry.TryGetAssetFromId(targetAgent.Graph.RootGraph.AuthoringAssetID, out asset);
+            }
+
+            // If the graph isn't set, the asset contains no data and the asset link cannot be updated.
             // Likewise, if the asset reference is null, the asset has been deleted and the link cannot be updated.
-            BehaviorGraphAssetRegistry.TryGetAssetFromId(targetAgent.Graph.m_RootGraph.AuthoringAssetID, out BehaviorAuthoringGraph asset);
-            if (ReferenceEquals(asset, null))
+            if (asset == null)
             {
                 Debug.LogWarning($"Behavior graph reference lost on {targetAgent}.", targetAgent);
                 targetAgent.Graph = null;
+                if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(targetAgent))
+                {
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(targetAgent);
+                }
+
                 EditorUtility.SetDirty(targetAgent);
                 return;
             }
@@ -777,29 +802,18 @@ namespace Unity.Behavior
             // which is not desirable here. If no runtime graph exists, null should be assigned.
             string assetPath = AssetDatabase.GetAssetPath(asset);
             targetAgent.Graph = AssetDatabase.LoadAssetAtPath<BehaviorGraph>(assetPath);
+            if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(targetAgent))
+            {
+                PrefabUtility.RecordPrefabInstancePropertyModifications(targetAgent);
+            }
             EditorUtility.SetDirty(targetAgent);
-        }
-
-        private bool HaveSameGraph(BehaviorGraphAgentBase agent, BehaviorGraphAgentBase otherAgent)
-        {
-            // The two share the same assigned asset.
-            if (ReferenceEquals(agent.Graph, otherAgent.Graph))
-                return true;
-
-            // The two have assigned instances that are copies of a shared asset.
-            if (agent.Graph && otherAgent.Graph
-                            && agent.Graph.m_RootGraph.AuthoringAssetID == otherAgent.Graph.m_RootGraph.AuthoringAssetID
-                            && agent.Graph.m_RootGraph.VersionTimestamp == otherAgent.Graph.m_RootGraph.VersionTimestamp)
-                return true;
-
-            return false;
         }
 
         private BlackboardVariable GetTargetVariable(BehaviorGraphAgentBase agent, SerializableGUID variableID)
         {
             // If the application is playing, use the runtime graph's blackboard.
             agent.Graph.BlackboardReference.GetVariable(variableID, out BlackboardVariable runtimeVariableInstance);
-            if (Application.isPlaying)
+            if (Application.isPlaying && agent.m_IsInitialised)
             {
                 return runtimeVariableInstance;
             }
@@ -831,8 +845,14 @@ namespace Unity.Behavior
                 overrideVariable = refVariable.Duplicate();
                 overrideVariable.SetObjectValueWithoutNotify(newValue);
                 agent.m_BlackboardOverrides.Add(refVariable.GUID, overrideVariable);
+                agent.m_BlackboardVariableOverridesList.Add(overrideVariable);
+            }
+            if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(agent))
+            {
+                PrefabUtility.RecordPrefabInstancePropertyModifications(agent);
             }
             EditorUtility.SetDirty(agent);
+            m_ModificationsMade = true;
         }
 
         public void ShowContextMenuForVariable(SerializableGUID guid, bool isOverride)
@@ -867,8 +887,14 @@ namespace Unity.Behavior
                     {
                         targetAgent.m_BlackboardOverrides.Remove(guid);
                     }
+                    if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(targetAgent))
+                    {
+                        PrefabUtility.RecordPrefabInstancePropertyModifications(targetAgent);
+                    }
+                    EditorUtility.SetDirty(targetAgent);
                 }
             }
+            serializedObject.Update();
         }
     }
 }

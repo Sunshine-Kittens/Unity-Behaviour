@@ -20,19 +20,27 @@ namespace Unity.Behavior
 
         static void HandleDropOnObject(GameObject gameObject)
         {
+            Undo.RecordObject(gameObject, "Drop Behavior Graph Object");
             BehaviorAuthoringGraph behaviorAuthoringGraph = DragAndDrop.objectReferences[0] as BehaviorAuthoringGraph;
             BehaviorGraphAgentBase behaviorGraphAgent = gameObject.GetComponent<BehaviorGraphAgentBase>();
             if (behaviorGraphAgent == null)
             {
-                behaviorGraphAgent = gameObject.AddComponent<BehaviorGraphAgent>();
-                EditorUtility.SetDirty(gameObject);
+                behaviorGraphAgent = Undo.AddComponent<BehaviorGraphAgent>(gameObject);
             }
             var runtimeGraph = BehaviorAuthoringGraph.GetOrCreateGraph(behaviorAuthoringGraph);
-            if (runtimeGraph.m_RootGraph == null)
+            if (runtimeGraph.RootGraph == null)
             {
                 behaviorAuthoringGraph.BuildRuntimeGraph();
+                behaviorAuthoringGraph.SaveAsset();
             }
-            behaviorGraphAgent.Graph = runtimeGraph;
+            if (PrefabUtility.IsPartOfPrefabThatCanBeAppliedTo(gameObject))
+            {
+                PrefabUtility.RecordPrefabInstancePropertyModifications(gameObject);
+            }
+            EditorUtility.SetDirty(gameObject);
+            SerializedObject serializedAgent = new SerializedObject(behaviorGraphAgent);
+            serializedAgent.FindProperty("m_Graph").boxedValue = runtimeGraph;
+            serializedAgent.ApplyModifiedProperties();
         }
 
         static DragAndDropVisualMode InspectorDropHandler(Object[] targets, bool perform)

@@ -25,14 +25,14 @@ namespace Unity.Behavior
         private Node m_Child;
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             CurrentStatus = Status.Uninitialized;
             Child?.ResetStatus();
         }
 
         /// <inheritdoc cref="AwakeParents" />
-        public override void AwakeParents()
+        protected internal override void AwakeParents()
         {
             for (int i = 0; i < Parents.Count; i++)
             {
@@ -48,7 +48,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="AddParent" />
-        public override void AddParent(Node parent)
+        internal override void AddParent(Node parent)
         {
             this.Parents.Add(parent);
         }

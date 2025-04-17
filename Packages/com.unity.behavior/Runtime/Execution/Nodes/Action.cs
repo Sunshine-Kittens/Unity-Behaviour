@@ -19,13 +19,13 @@ namespace Unity.Behavior
         internal Node m_Parent;
         
         /// <inheritdoc cref="Node.AwakeParents" />
-        public override void AwakeParents()
+        protected internal override void AwakeParents()
         {
             AwakeNode(Parent);
         }
 
         /// <inheritdoc cref="Node.AddParent" />
-        public override void AddParent(Node parent)
+        internal override void AddParent(Node parent)
         {
             this.Parent = parent;
         }
