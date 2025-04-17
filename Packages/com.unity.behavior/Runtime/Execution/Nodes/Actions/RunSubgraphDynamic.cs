@@ -27,7 +27,7 @@ namespace Unity.Behavior
                 return Status.Failure;
             }
 
-            if (Subgraph == null || Subgraph.m_RootGraph == null)
+            if (Subgraph == null || Subgraph.RootGraph == null)
             {
                 return Status.Failure;
             }
@@ -53,7 +53,7 @@ namespace Unity.Behavior
                 return Status.Failure;
             }
 
-            return Subgraph.m_RootGraph.StartNode(Subgraph.m_RootGraph.Root) switch
+            return Subgraph.RootGraph.StartNode(Subgraph.RootGraph.Root) switch
             {
                 Status.Success => Status.Success,
                 Status.Failure => Status.Failure,
@@ -71,7 +71,7 @@ namespace Unity.Behavior
             }
 
             Subgraph.Tick();
-            return Subgraph.m_RootGraph.Root.CurrentStatus switch
+            return Subgraph.RootGraph.Root.CurrentStatus switch
             {
                 Status.Success => Status.Success,
                 Status.Failure => Status.Failure,
@@ -89,9 +89,9 @@ namespace Unity.Behavior
                 return;
             }
 
-            if (Subgraph?.m_RootGraph?.Root != null)
+            if (Subgraph?.RootGraph?.Root != null)
             {
-                Subgraph.m_RootGraph.EndNode(Subgraph.m_RootGraph.Root);
+                Subgraph.RootGraph.EndNode(Subgraph.RootGraph.Root);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Unity.Behavior
                 return true;
             }
 
-            if (Subgraph == null || Subgraph.m_RootGraph == null)
+            if (Subgraph == null || Subgraph.RootGraph == null)
             {
                 return false;
             }
@@ -133,7 +133,7 @@ namespace Unity.Behavior
         private void InitChannelAndBlackboard()
         {
             // Initialize default event channels for unassigned channel variables.
-            foreach (BlackboardVariable variable in Subgraph.m_RootGraph.Blackboard.Variables)
+            foreach (BlackboardVariable variable in Subgraph.RootGraph.Blackboard.Variables)
             {
                 if (typeof(EventChannelBase).IsAssignableFrom(variable.Type) && variable.ObjectValue == null)
                 {
@@ -160,7 +160,7 @@ namespace Unity.Behavior
 
             if (RequiredBlackboard != null)
             {
-                foreach (BlackboardReference reference in Subgraph.m_RootGraph.BlackboardGroupReferences)
+                foreach (BlackboardReference reference in Subgraph.RootGraph.BlackboardGroupReferences)
                 {
                     if (reference.SourceBlackboardAsset.AssetID != RequiredBlackboard.AssetID)
                     {

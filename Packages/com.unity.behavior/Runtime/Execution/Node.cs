@@ -79,17 +79,12 @@ namespace Unity.Behavior
         /// The BehaviorGraph containing the node instance.
         /// </summary>
         [SerializeReference, DontCreateProperty]
-        private BehaviorGraphModule m_Graph;
-        public BehaviorGraphModule Graph
-        {
-            get { return m_Graph; }
-            internal set { m_Graph = value; }
-        }
+        internal BehaviorGraphModule Graph;
 
         /// <summary>
         /// The game object that contains the `BehaviorGraphAgentBase` that is running the behavior graph.
         /// </summary>
-        public GameObject GameObject => m_Graph.GameObject;
+        public GameObject GameObject => Graph.GameObject;
 
         /// <summary>
         /// The constructor for Node, currently internal to prevent creation of new node base classes.
@@ -103,7 +98,7 @@ namespace Unity.Behavior
             IsRunning = true;
 #if DEBUG && UNITY_EDITOR
             // The user set a breakpoint in the graph editor. Call a break on the debugger.
-            if (m_Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
+            if (Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
 #endif
             return OnStart();
         }
@@ -112,7 +107,7 @@ namespace Unity.Behavior
         {
 #if DEBUG && UNITY_EDITOR
             // The user set a breakpoint in the graph editor. Call a break on the debugger.
-            if (m_Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
+            if (Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
 #endif
             return OnUpdate();
         }
@@ -128,7 +123,7 @@ namespace Unity.Behavior
             IsRunning = false;
 #if DEBUG && UNITY_EDITOR
             // The user set a breakpoint in the graph editor. Call a break on the debugger.
-            if (m_Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
+            if (Graph.ShouldDebuggerBreak(ID)) System.Diagnostics.Debugger.Break();
 #endif
             OnEnd();
         }
@@ -164,13 +159,13 @@ namespace Unity.Behavior
         /// <summary>
         /// AwakeParents is called after the running node has returned a status of Success or Fail.
         /// </summary>
-        public virtual void AwakeParents()
+        protected internal virtual void AwakeParents()
         { }
 
         /// <summary>
         /// Resets the current status of the node.
         /// </summary>
-        public virtual void ResetStatus()
+        protected internal virtual void ResetStatus()
         {
             CurrentStatus = Status.Uninitialized;
         }
@@ -178,33 +173,33 @@ namespace Unity.Behavior
         /// <inheritdoc cref="BehaviorGraphModule.StartNode"/>
         protected Status StartNode(Node node)
         {
-            return m_Graph.StartNode(node);
+            return Graph.StartNode(node);
         }
 
         /// <inheritdoc cref="BehaviorGraphModule.EndNode"/>
         protected void EndNode(Node node)
         {
             // Catch if the user has called EndNode() recursively.
-            if (m_Graph.IsEndingBranch)
+            if (Graph.IsEndingBranch)
             {
                 Debug.LogError($"EndNode() has been called recursively from {this}. This is not allowed."
                                + " Ensure that EndNode() is not called from within OnEnd().");
                 return;
             }
-            m_Graph.EndNode(node);
+            Graph.EndNode(node);
         }
 
         /// <inheritdoc cref="BehaviorGraphModule.AwakeNode"/>
         protected void AwakeNode(Node node)
         {
-            m_Graph.AwakeNode(node);
+            Graph.AwakeNode(node);
         }
 
         /// <summary>
         /// Adds a parent to this node
         /// </summary>
         /// <param name="parent"></param>
-        public abstract void AddParent(Node parent);
+        internal abstract void AddParent(Node parent);
 
         /// <summary>
         /// Message raised before a graph is serialized. Can be use to prepare data for deserialization.

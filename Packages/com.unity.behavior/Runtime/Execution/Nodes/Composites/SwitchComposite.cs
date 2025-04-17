@@ -59,7 +59,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             CurrentStatus = Status.Uninitialized;
             foreach (var child in NullFreeChildren())

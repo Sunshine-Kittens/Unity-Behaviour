@@ -19,27 +19,12 @@ namespace Unity.Behavior
         /// <summary>
         /// The blackboard reference used for accessing variables.
         /// </summary>
-        public BlackboardReference BlackboardReference => m_RootGraph?.BlackboardReference;
+        public BlackboardReference BlackboardReference => RootGraph?.BlackboardReference;
         
         /// <summary>
         /// True if the graph is running, false otherwise.
         /// </summary>
-        public bool IsRunning => m_RootGraph?.Root is { CurrentStatus: Status.Running or Status.Waiting };
-
-        /// <summary>
-        /// Root node of the RootGraph BehaviorGraphModule.
-        /// </summary>
-        public Node RootNode
-        {
-            get
-            {
-                if(m_RootGraph != null)
-                {
-                    return m_RootGraph.Root;
-                }
-                return null;
-            }
-        }
+        public bool IsRunning => RootGraph?.Root is { CurrentStatus: Status.Running or Status.Waiting };
 
         /// <summary>
         /// The set of linked graphs that make up the behaviour.
@@ -50,15 +35,8 @@ namespace Unity.Behavior
         /// <summary>
         /// The primary entry point for the behaviour defined by the BehaviorAuthoringGraph.
         /// </summary>
-        [SerializeReference, DontCreateProperty]
-        internal BehaviorGraphModule m_RootGraph;
-
-        [CreateProperty]
-        public BehaviorGraphModule RootGraph
-        {
-            get { return m_RootGraph; }
-            internal set { m_RootGraph = value; }
-        }
+        [SerializeReference]
+        internal BehaviorGraphModule RootGraph;
 
         [SerializeReference, DontCreateProperty]
         internal BehaviorGraphDebugInfo m_DebugInfo;
@@ -68,11 +46,11 @@ namespace Unity.Behavior
         /// </summary>
         public void Start()
         {
-            if (m_RootGraph?.Root == null)
+            if (RootGraph?.Root == null)
             {
                 return;
             }
-            m_RootGraph.StartNode(m_RootGraph.Root);
+            RootGraph.StartNode(RootGraph.Root);
         }
 
         /// <summary>
@@ -80,7 +58,7 @@ namespace Unity.Behavior
         /// </summary>
         public void Tick()
         {
-            m_RootGraph?.Tick();
+            RootGraph?.Tick();
         }
 
         /// <summary>
@@ -88,11 +66,11 @@ namespace Unity.Behavior
         /// </summary>
         public void End()
         {
-            if (m_RootGraph?.Root == null)
+            if (RootGraph?.Root == null)
             {
                 return;
             }
-            m_RootGraph.EndNode(m_RootGraph.Root);
+            RootGraph.EndNode(RootGraph.Root);
             foreach (BehaviorGraphModule graphModule in Graphs)
             {
                 graphModule.Reset();
@@ -110,12 +88,12 @@ namespace Unity.Behavior
 
         internal void AssignGameObjectToGraphModules(GameObject gameObject)
         {
-            if (m_RootGraph == null)
+            if (RootGraph == null)
             {
                 return;
             }
 
-            m_RootGraph.GameObject = gameObject;
+            RootGraph.GameObject = gameObject;
             foreach (var graphModule in Graphs)
             {
                 graphModule.GameObject = gameObject;

@@ -26,7 +26,7 @@ namespace Unity.Behavior
         internal List<Node> m_Children = new List<Node>();
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             CurrentStatus = Status.Uninitialized;
             for (int i = 0; i < Children.Count; ++i)
@@ -36,7 +36,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="AwakeParents" />
-        public override void AwakeParents()
+        protected internal override void AwakeParents()
         {
             AwakeNode(Parent);
         }
@@ -55,7 +55,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="AddParent" />
-        public override void AddParent(Node parent)
+        internal override void AddParent(Node parent)
         {
             this.Parent = parent;
         }
