@@ -664,7 +664,7 @@ namespace Unity.Behavior
                 // If the graph was invalid, it would be cleared by now.
                 if (m_Graph == null)
                 {
-                    return;
+                    return false;
                 }
             }
             if (m_Graph.IsRunning)
@@ -717,7 +717,7 @@ namespace Unity.Behavior
                 // If the graph was invalid, it would be cleared by now.
                 if (m_Graph == null)
                 {
-                    return;
+                    return false;
                 }
                 m_Graph.Start();
                 m_IsStarted = true;
@@ -955,7 +955,7 @@ namespace Unity.Behavior
         {
             m_IsInitialised = false;
             Graph = m_OriginalGraph;
-            Restart();
+            RestartGraphInternal();
             OnRuntimeDeserializationEvent?.Invoke();
         }
 
