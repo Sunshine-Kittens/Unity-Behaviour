@@ -15,6 +15,13 @@ namespace Unity.Behavior
         id: "3bc19d3122374cc9a985d90351633310")]
     internal partial class NavigateToTargetAction : Action
     {
+        public enum TargetPositionMode
+        {
+            ClosestPointOnAnyCollider,      // Use the closest point on any collider, including child objects
+            ClosestPointOnTargetCollider,   // Use the closest point on the target's own collider only
+            ExactTargetPosition             // Use the exact position of the target, ignoring colliders
+        }
+
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<GameObject> Target;
         [SerializeReference] public BlackboardVariable<float> Speed = new BlackboardVariable<float>(1.0f);
@@ -23,13 +30,20 @@ namespace Unity.Behavior
 
         // This will only be used in movement without a navigation agent.
         [SerializeReference] public BlackboardVariable<float> SlowDownDistance = new BlackboardVariable<float>(1.0f);
+        [Tooltip("Defines how the target position is determined for navigation:" +
+            "\n- ClosestPointOnAnyCollider: Use the closest point on any collider, including child objects" +
+            "\n- ClosestPointOnTargetCollider: Use the closest point on the target's own collider only" +
+            "\n- ExactTargetPosition: Use the exact position of the target, ignoring colliders. Default if no collider is found.")]
+        [SerializeReference] public BlackboardVariable<TargetPositionMode> m_TargetPositionMode = new(TargetPositionMode.ClosestPointOnAnyCollider);
 
         private NavMeshAgent m_NavMeshAgent;
         private Animator m_Animator;
-        private float m_PreviousStoppingDistance;
         private Vector3 m_LastTargetPosition;
         private Vector3 m_ColliderAdjustedTargetPosition;
+        [CreateProperty] private float m_OriginalStoppingDistance = -1f;
+        [CreateProperty] private float m_OriginalSpeed = -1f;
         private float m_ColliderOffset;
+        private float m_CurrentSpeed;
 
         protected override Status OnStart()
         {
@@ -49,7 +63,10 @@ namespace Unity.Behavior
             }
 
             // Check if the target position has changed.
-            bool boolUpdateTargetPosition = !Mathf.Approximately(m_LastTargetPosition.x, Target.Value.transform.position.x) || !Mathf.Approximately(m_LastTargetPosition.y, Target.Value.transform.position.y) || !Mathf.Approximately(m_LastTargetPosition.z, Target.Value.transform.position.z);
+            bool boolUpdateTargetPosition = !Mathf.Approximately(m_LastTargetPosition.x, Target.Value.transform.position.x) 
+                || !Mathf.Approximately(m_LastTargetPosition.y, Target.Value.transform.position.y) 
+                || !Mathf.Approximately(m_LastTargetPosition.z, Target.Value.transform.position.z);
+
             if (boolUpdateTargetPosition)
             {
                 m_LastTargetPosition = Target.Value.transform.position;
@@ -57,53 +74,30 @@ namespace Unity.Behavior
             }
 
             float distance = GetDistanceXZ();
-            if (distance <= (DistanceThreshold + m_ColliderOffset))
+            bool destinationReached = distance <= (DistanceThreshold + m_ColliderOffset);
+            
+            if (destinationReached && (m_NavMeshAgent == null || !m_NavMeshAgent.pathPending))
             {
                 return Status.Success;
             }
-
-            if (m_NavMeshAgent != null)
+            else if (m_NavMeshAgent == null) // transform-based movement
             {
-                if (boolUpdateTargetPosition)
-                {
-                    m_NavMeshAgent.SetDestination(m_ColliderAdjustedTargetPosition);
-                }
-
-                if (m_NavMeshAgent.IsNavigationComplete())
-                {
-                    return Status.Success;
-                }
+                m_CurrentSpeed = NavigationUtility.SimpleMoveTowardsLocation(Agent.Value.transform, m_ColliderAdjustedTargetPosition,
+                    Speed, distance, SlowDownDistance);
             }
-            else
+            else if (boolUpdateTargetPosition) // navmesh-based destination update (if needed)
             {
-                float speed = Speed;
-
-                if (SlowDownDistance > 0.0f && distance < SlowDownDistance)
-                {
-                    float ratio = distance / SlowDownDistance;
-                    speed = Mathf.Max(0.1f, Speed * ratio);
-                }
-
-                Vector3 agentPosition = Agent.Value.transform.position;
-                Vector3 toDestination = m_ColliderAdjustedTargetPosition - agentPosition;
-                toDestination.y = 0.0f;
-                toDestination.Normalize();
-                agentPosition += toDestination * (speed * Time.deltaTime);
-                Agent.Value.transform.position = agentPosition;
-
-                // Look at the target.
-                Agent.Value.transform.forward = toDestination;
+                m_NavMeshAgent.SetDestination(m_ColliderAdjustedTargetPosition);
             }
+
+            UpdateAnimatorSpeed();
 
             return Status.Running;
         }
 
         protected override void OnEnd()
         {
-            if (m_Animator != null)
-            {
-                m_Animator.SetFloat(AnimatorSpeedParam, 0);
-            }
+            UpdateAnimatorSpeed(0f);
 
             if (m_NavMeshAgent != null)
             {
@@ -111,7 +105,8 @@ namespace Unity.Behavior
                 {
                     m_NavMeshAgent.ResetPath();
                 }
-                m_NavMeshAgent.stoppingDistance = m_PreviousStoppingDistance;
+                m_NavMeshAgent.speed = m_OriginalSpeed;
+                m_NavMeshAgent.stoppingDistance = m_OriginalStoppingDistance;
             }
 
             m_NavMeshAgent = null;
@@ -120,6 +115,18 @@ namespace Unity.Behavior
 
         protected override void OnDeserialize()
         {
+            // If using a navigation mesh, we need to reset default value before Initialize.
+            m_NavMeshAgent = Agent.Value.GetComponentInChildren<NavMeshAgent>();
+            if (m_NavMeshAgent != null)
+            {
+                if (m_OriginalSpeed >= 0f)
+                    m_NavMeshAgent.speed = m_OriginalSpeed;
+                if (m_OriginalStoppingDistance >= 0f)
+                    m_NavMeshAgent.stoppingDistance = m_OriginalStoppingDistance;
+                
+                m_NavMeshAgent.Warp(Agent.Value.transform.position);
+            }
+
             Initialize();
         }
 
@@ -142,13 +149,6 @@ namespace Unity.Behavior
                 return Status.Success;
             }
 
-            // If using animator, set speed parameter.
-            m_Animator = Agent.Value.GetComponentInChildren<Animator>();
-            if (m_Animator != null)
-            {
-                m_Animator.SetFloat(AnimatorSpeedParam, Speed);
-            }
-
             // If using a navigation mesh, set target position for navigation mesh agent.
             m_NavMeshAgent = Agent.Value.GetComponentInChildren<NavMeshAgent>();
             if (m_NavMeshAgent != null)
@@ -157,24 +157,37 @@ namespace Unity.Behavior
                 {
                     m_NavMeshAgent.ResetPath();
                 }
-                m_NavMeshAgent.speed = Speed;
-                m_PreviousStoppingDistance = m_NavMeshAgent.stoppingDistance;
 
+                m_OriginalSpeed = m_NavMeshAgent.speed;
+                m_NavMeshAgent.speed = Speed;
+                m_OriginalStoppingDistance = m_NavMeshAgent.stoppingDistance;
                 m_NavMeshAgent.stoppingDistance = DistanceThreshold + m_ColliderOffset;
                 m_NavMeshAgent.SetDestination(m_ColliderAdjustedTargetPosition);
             }
 
+            m_Animator = Agent.Value.GetComponentInChildren<Animator>();
+            UpdateAnimatorSpeed(0f);
+
             return Status.Running;
         }
 
-
         private Vector3 GetPositionColliderAdjusted()
         {
-            Collider targetCollider = Target.Value.GetComponentInChildren<Collider>();
-            if (targetCollider != null)
+            switch (m_TargetPositionMode.Value)
             {
-                return targetCollider.ClosestPoint(Agent.Value.transform.position);
+                case TargetPositionMode.ClosestPointOnAnyCollider:
+                    Collider anyCollider = Target.Value.GetComponentInChildren<Collider>(includeInactive: false);
+                    if (anyCollider == null || anyCollider.enabled == false) 
+                        break;
+                    return anyCollider.ClosestPoint(Agent.Value.transform.position);
+                case TargetPositionMode.ClosestPointOnTargetCollider:
+                    Collider targetCollider = Target.Value.GetComponent<Collider>();
+                    if (targetCollider == null || targetCollider.enabled == false) 
+                        break;
+                    return targetCollider.ClosestPoint(Agent.Value.transform.position);
             }
+
+            // Default to target position.
             return Target.Value.transform.position;
         }
 
@@ -182,6 +195,11 @@ namespace Unity.Behavior
         {
             Vector3 agentPosition = new Vector3(Agent.Value.transform.position.x, m_ColliderAdjustedTargetPosition.y, Agent.Value.transform.position.z);
             return Vector3.Distance(agentPosition, m_ColliderAdjustedTargetPosition);
+        }
+
+        private void UpdateAnimatorSpeed(float explicitSpeed = -1)
+        {
+            NavigationUtility.UpdateAnimatorSpeed(m_Animator, AnimatorSpeedParam, m_NavMeshAgent, m_CurrentSpeed, explicitSpeed: explicitSpeed);
         }
     }
 }

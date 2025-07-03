@@ -1,3 +1,5 @@
+using Unity.Behavior.Serialization;
+using Unity.Properties;
 using UnityEngine;
 
 namespace Unity.Behavior
@@ -10,22 +12,24 @@ namespace Unity.Behavior
         /// <summary>
         /// The parent of the node.
         /// </summary>
+        [CreateProperty, DontSerialize]
         public Node Parent
         {
             get => m_Parent;
             internal set { m_Parent = value; }
         }
+        
         [SerializeReference]
         internal Node m_Parent;
         
         /// <inheritdoc cref="Node.AwakeParents" />
-        public override void AwakeParents()
+        protected internal override void AwakeParents()
         {
             AwakeNode(Parent);
         }
 
         /// <inheritdoc cref="Node.AddParent" />
-        public override void AddParent(Node parent)
+        internal override void AddParent(Node parent)
         {
             this.Parent = parent;
         }

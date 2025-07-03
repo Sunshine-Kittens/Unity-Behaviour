@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Unity.AppUI.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,6 +12,15 @@ namespace Unity.Behavior.GraphFramework
     [UxmlElement]
     internal partial class GraphEditor : VisualElement, IDispatcherContext
     {
+#if UNITY_EDITOR
+        private const string k_PlaymodeEditWarning = "You are modifying the Behavior Graph during Play mode.\n" +
+                        "\n- Existing agent instances in the scene are still using the previous version of the graph" +
+                        "\n- Debug visualization may show inconsistent information" +
+                        "\n\nTo apply changes to running agents, use the 'Reinitialize And Restart Graph' option " +
+                        "in the agent's context menu (right-click on BehaviorGraphAgent component).";
+
+        private const string k_UndoScheduledBoolName = "BehaviorAsset_UndoRedoScheduled";
+#endif
         public GraphAsset Asset { get; private set; }
         public BlackboardView Blackboard { get; }
         public InspectorView Inspector { get; }
@@ -33,6 +45,10 @@ namespace Unity.Behavior.GraphFramework
         private const string k_DefaultStylesheetFile = "Packages/com.unity.behavior/Tools/Graph/Assets/GraphEditorStylesheet.uss";
 
         private long m_LastAssetVersion = -1u;
+        private bool m_UndoRedoDirty;
+#if UNITY_EDITOR
+        private bool m_PlayModeEditingGranted = false;
+#endif
 
         /// <summary>
         /// Default constructor used by the UXML Serializer.
@@ -75,7 +91,6 @@ namespace Unity.Behavior.GraphFramework
             RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
             RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
             RegisterCallback<KeyDownEvent>(OnKeyDown);
-
             schedule.Execute(Update);
         }
 
@@ -88,16 +103,26 @@ namespace Unity.Behavior.GraphFramework
 
             Dispatcher.Tick();
 
-            if (m_LastAssetVersion != Asset.VersionTimestamp)
+            if (m_UndoRedoDirty)
+            {
+                GraphView?.RefreshFromAsset();
+                Blackboard?.RefreshFromAsset();
+                Inspector?.Refresh();
+                m_UndoRedoDirty = false;
+            }
+
+            if (Asset.HasOutstandingChanges && m_LastAssetVersion != Asset.VersionTimestamp && CheckPlayModeEditionGranted())
             {
                 // BEHAVB-175: Workaround to force refresh field model after a blackboard variable rename.
                 Asset.OnValidate();
+                OnAssetSave();
 
-                Blackboard.RefreshFromAsset();
-                GraphView.RefreshFromAsset();
+                Blackboard?.RefreshFromAsset();
+                GraphView?.RefreshFromAsset();
                 Inspector?.Refresh();
 
                 m_LastAssetVersion = Asset.VersionTimestamp;
+
             }
             schedule.Execute(Update);
         }
@@ -109,6 +134,13 @@ namespace Unity.Behavior.GraphFramework
             {
                 asset.OnValidate();
             }
+
+            // Check if there is a need to reload.
+            if (m_LastAssetVersion == Asset.VersionTimestamp)
+            {
+                return;
+            }
+
             Blackboard.Load(Asset.Blackboard);
             GraphView.Load(asset);
             m_LastAssetVersion = Asset.VersionTimestamp;
@@ -140,9 +172,7 @@ namespace Unity.Behavior.GraphFramework
             {
                 styleSheets.Add(ResourceLoadAPI.Load<StyleSheet>("Packages/com.unity.behavior/Tools/Graph/Assets/GraphRuntimeStylesheet.uss"));
             }
-#if UNITY_EDITOR
-            UnityEditor.Undo.undoRedoPerformed += OnUndoRedoPerformed;
-#endif
+
             // Create Blackboard and Inspector panels.
             ToggleBlackboard(true);
             ToggleNodeInspector(true);
@@ -152,22 +182,18 @@ namespace Unity.Behavior.GraphFramework
             {
                 GetFirstAncestorOfType<Panel>().styleSheets.Add(ResourceLoadAPI.Load<StyleSheet>("Packages/com.unity.behavior/Elements/Assets/GraphIconStylesheet.uss"));
             }
+#if UNITY_EDITOR
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
+            EditorApplication.playModeStateChanged += EditorApplication_playModeStateChanged;
+#endif
         }
 
         private void OnDetachFromPanel(DetachFromPanelEvent evt)
         {
 #if UNITY_EDITOR
-            UnityEditor.Undo.undoRedoPerformed -= OnUndoRedoPerformed;
+            Undo.undoRedoPerformed -= OnUndoRedoPerformed;
+            EditorApplication.playModeStateChanged -= EditorApplication_playModeStateChanged;
 #endif
-        }
-
-        protected virtual void OnUndoRedoPerformed()
-        {
-            GraphView.IsPerformingUndo = true;
-            Load(Asset);
-            GraphView.IsPerformingUndo = false;
-            Asset.SetAssetDirty();
-            IsAssetVersionUpToDate();
         }
 
         protected virtual void RegisterCommandHandlers()
@@ -201,30 +227,31 @@ namespace Unity.Behavior.GraphFramework
 
             void CreateVariableFromMenuAction(string variableTypeName, Type type)
             {
-                Dispatcher.DispatchImmediate(new CreateVariableCommand($"New {variableTypeName}", BlackboardUtils.GetVariableModelTypeForType(type)));
+                Dispatcher.DispatchImmediate(new CreateVariableCommand($"New {variableTypeName}", BlackboardUtils.GetVariableModelTypeForType(type)),
+                    setHasOutstandingChanges: false);
             }
 
-            builder.Add("Object", iconName: "object", onSelected: delegate { CreateVariableFromMenuAction("Object", typeof(GameObject)); });
-            builder.Add("String", iconName: "string", onSelected: delegate { CreateVariableFromMenuAction("String", typeof(string)); });
-            builder.Add("Float", iconName: "float", onSelected: delegate { CreateVariableFromMenuAction("Float", typeof(float)); });
-            builder.Add("Integer", iconName: "integer", onSelected: delegate { CreateVariableFromMenuAction("Integer", typeof(int)); });
-            builder.Add("Double", iconName: "double", onSelected: delegate { CreateVariableFromMenuAction("Double", typeof(double)); });
-            builder.Add("Boolean", iconName: "boolean", onSelected: delegate { CreateVariableFromMenuAction("Boolean", typeof(bool)); });
-            builder.Add("Vector2", iconName: "vector2", onSelected: delegate { CreateVariableFromMenuAction("Vector2", typeof(Vector2)); });
-            builder.Add("Vector3", iconName: "vector3", onSelected: delegate { CreateVariableFromMenuAction("Vector3", typeof(Vector3)); });
-            builder.Add("Vector4", iconName: "vector4", onSelected: delegate { CreateVariableFromMenuAction("Vector4", typeof(Vector4)); });
-            builder.Add("Color", iconName: "color", onSelected: delegate { CreateVariableFromMenuAction("Color", typeof(Color)); });
+            builder.Add("Object", onSelected: delegate { CreateVariableFromMenuAction("Object", typeof(GameObject)); }, iconName: "object");
+            builder.Add("String", onSelected: delegate { CreateVariableFromMenuAction("String", typeof(string)); }, iconName: "string");
+            builder.Add("Float", onSelected: delegate { CreateVariableFromMenuAction("Float", typeof(float)); }, iconName: "float");
+            builder.Add("Integer", onSelected: delegate { CreateVariableFromMenuAction("Integer", typeof(int)); }, iconName: "integer");
+            builder.Add("Double", onSelected: delegate { CreateVariableFromMenuAction("Double", typeof(double)); }, iconName: "double");
+            builder.Add("Boolean", onSelected: delegate { CreateVariableFromMenuAction("Boolean", typeof(bool)); }, iconName: "boolean");
+            builder.Add("Vector2", onSelected: delegate { CreateVariableFromMenuAction("Vector2", typeof(Vector2)); }, iconName: "vector2");
+            builder.Add("Vector3", onSelected: delegate { CreateVariableFromMenuAction("Vector3", typeof(Vector3)); }, iconName: "vector3");
+            builder.Add("Vector4", onSelected: delegate { CreateVariableFromMenuAction("Vector4", typeof(Vector4)); }, iconName: "vector4");
+            builder.Add("Color", onSelected: delegate { CreateVariableFromMenuAction("Color", typeof(Color)); }, iconName: "color");
 
-            builder.Add("List/Object", iconName: "object", onSelected: delegate { CreateVariableFromMenuAction("Object List", typeof(List<GameObject>)); });
-            builder.Add("List/String", iconName: "string", onSelected: delegate { CreateVariableFromMenuAction("String List", typeof(List<string>)); });
-            builder.Add("List/Float", iconName: "float", onSelected: delegate { CreateVariableFromMenuAction("Float List", typeof(List<float>)); });
-            builder.Add("List/Integer", iconName: "integer", onSelected: delegate { CreateVariableFromMenuAction("Integer List", typeof(List<int>)); });
-            builder.Add("List/Double", iconName: "double", onSelected: delegate { CreateVariableFromMenuAction("Double List", typeof(List<double>)); });
-            builder.Add("List/Boolean", iconName: "boolean", onSelected: delegate { CreateVariableFromMenuAction("Boolean List", typeof(List<bool>)); });
-            builder.Add("List/Vector2", iconName: "vector2", onSelected: delegate { CreateVariableFromMenuAction("Vector2 List", typeof(List<Vector2>)); });
-            builder.Add("List/Vector3", iconName: "vector3", onSelected: delegate { CreateVariableFromMenuAction("Vector3 List", typeof(List<Vector3>)); });
-            builder.Add("List/Vector4", iconName: "vector4", onSelected: delegate { CreateVariableFromMenuAction("Vector4 List", typeof(List<Vector4>)); });
-            builder.Add("List/Color", iconName: "color", onSelected: delegate { CreateVariableFromMenuAction("Color List", typeof(List<Color>)); });
+            builder.Add("List/Object", onSelected: delegate { CreateVariableFromMenuAction("Object List", typeof(List<GameObject>)); }, iconName: "object");
+            builder.Add("List/String", onSelected: delegate { CreateVariableFromMenuAction("String List", typeof(List<string>)); }, iconName: "string");
+            builder.Add("List/Float", onSelected: delegate { CreateVariableFromMenuAction("Float List", typeof(List<float>)); }, iconName: "float");
+            builder.Add("List/Integer", onSelected: delegate { CreateVariableFromMenuAction("Integer List", typeof(List<int>)); }, iconName: "integer");
+            builder.Add("List/Double", onSelected: delegate { CreateVariableFromMenuAction("Double List", typeof(List<double>)); }, iconName: "double");
+            builder.Add("List/Boolean", onSelected: delegate { CreateVariableFromMenuAction("Boolean List", typeof(List<bool>)); }, iconName: "boolean");
+            builder.Add("List/Vector2", onSelected: delegate { CreateVariableFromMenuAction("Vector2 List", typeof(List<Vector2>)); }, iconName: "vector2");
+            builder.Add("List/Vector3", onSelected: delegate { CreateVariableFromMenuAction("Vector3 List", typeof(List<Vector3>)); }, iconName: "vector3");
+            builder.Add("List/Vector4", onSelected: delegate { CreateVariableFromMenuAction("Vector4 List", typeof(List<Vector4>)); }, iconName: "vector4");
+            builder.Add("List/Color", onSelected: delegate { CreateVariableFromMenuAction("Color List", typeof(List<Color>)); }, iconName: "color");
 
             return builder;
         }
@@ -282,5 +309,63 @@ namespace Unity.Behavior.GraphFramework
                 }
             }
         }
+
+        private bool CheckPlayModeEditionGranted()
+        {
+#if UNITY_EDITOR
+            if (!EditorApplication.isPlaying)
+            {
+                return true;
+            }
+
+            if (m_PlayModeEditingGranted)
+            {
+                return true;
+            }
+
+            bool result = EditorUtility.DisplayDialog(
+                "Behavior Graph Editing During Play Mode",
+                k_PlaymodeEditWarning, "OK",
+                DialogOptOutDecisionType.ForThisSession, "Don't Show Again This Session");
+
+            if (!result)
+            {
+                SessionState.SetBool(k_UndoScheduledBoolName, true);
+                Undo.PerformUndo();
+            }
+            else
+            {
+                // if user pressed OK, we no longer show the dialog for the playmode session.
+                m_PlayModeEditingGranted = true;
+            }
+
+            return result;
+#else 
+            return true;
+#endif
+        }
+
+#if UNITY_EDITOR
+        protected virtual void OnUndoRedoPerformed()
+        {
+            m_UndoRedoDirty = UnityEditor.EditorUtility.IsDirty(Asset) || UnityEditor.EditorUtility.IsDirty(Asset.Blackboard);
+#if BEHAVIOR_DEBUG_UNDO_REDO
+            if (m_UndoRedoDirty)
+            {
+                Debug.Log($"GraphEditor[{Asset.name}].OnUndoRedoPerformed");
+            }
+#endif
+        }
+
+        private void EditorApplication_playModeStateChanged(PlayModeStateChange newState)
+        {
+            switch (newState)
+            {
+                case PlayModeStateChange.EnteredPlayMode:
+                    m_PlayModeEditingGranted = false;
+                    break;
+            };
+        }
+#endif
     }
 }

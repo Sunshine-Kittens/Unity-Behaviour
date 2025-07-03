@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Unity.Behavior.Serialization;
 using Unity.Properties;
 using UnityEngine;
 
@@ -12,27 +14,28 @@ namespace Unity.Behavior
         /// <summary>
         /// The parents of the node.
         /// </summary>
+        [CreateProperty, DontSerialize]
         public List<Node> Parents { get => m_Parents; internal set => m_Parents = value; }
-        [SerializeReference, DontCreateProperty]
-        private List<Node> m_Parents = new List<Node>();
+        [SerializeReference]
+        internal List<Node> m_Parents = new List<Node>();
 
         /// <summary>
         /// The child of the node.
         /// </summary>
-        [CreateProperty]
+        [CreateProperty, DontSerialize]
         public Node Child { get => m_Child; internal set => m_Child = value; }
-        [SerializeReference, DontCreateProperty]
-        private Node m_Child;
+        [SerializeReference]
+        internal Node m_Child;
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             CurrentStatus = Status.Uninitialized;
             Child?.ResetStatus();
         }
 
         /// <inheritdoc cref="AwakeParents" />
-        public override void AwakeParents()
+        protected internal override void AwakeParents()
         {
             for (int i = 0; i < Parents.Count; i++)
             {
@@ -48,7 +51,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="AddParent" />
-        public override void AddParent(Node parent)
+        internal override void AddParent(Node parent)
         {
             this.Parents.Add(parent);
         }

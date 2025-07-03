@@ -72,8 +72,15 @@ namespace Unity.Behavior
 #if UNITY_EDITOR
             Undo.undoRedoPerformed += OnUndoRedoPerformed;
 #endif
+            
+            // Add graph icon stylesheet for the App UI panel.
+            if (GetFirstAncestorOfType<Panel>() != null)
+            {
+                GetFirstAncestorOfType<Panel>().styleSheets.Add(ResourceLoadAPI.Load<StyleSheet>("Packages/com.unity.behavior/Elements/Assets/GraphIconStylesheet.uss"));
+            }
         }
 
+#if UNITY_EDITOR
         private void OnUndoRedoPerformed()
         {
             if (Asset == null)
@@ -81,9 +88,17 @@ namespace Unity.Behavior
                 return;
             }
 
+            // Unity UndoRedo handles object states.
+            // However we still need to manually refresh open editors and the rebuild of dependent assets.
+            if (EditorUtility.IsDirty(Asset))
+            {
+                Asset.InvokeBlackboardChanged(BlackboardAsset.BlackboardChangedType.UndoRedo);
+                OnAssetSave();
+            }
+
             Load(Asset);
-            Asset.SetAssetDirty();
         }
+#endif
 
         public void Load(BehaviorBlackboardAuthoringAsset asset)
         {
@@ -143,7 +158,7 @@ namespace Unity.Behavior
             List<SearchView.Item> searchItems = new List<SearchView.Item>();
             foreach (BlackboardAsset asset in assets)
             {
-                searchItems.Add(new SearchView.Item(asset.name, data: asset));
+                searchItems.Add(new SearchView.Item(asset.name, data: asset, icon: BlackboardUtils.GetScriptableObjectIcon(asset)));
             }
             SearchWindow.Show("Open Blackboard", searchItems,
                 item => BlackboardWindowDelegate.Open(item.Data as BehaviorBlackboardAuthoringAsset),

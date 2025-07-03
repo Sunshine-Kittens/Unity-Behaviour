@@ -11,9 +11,14 @@ internal class BlackboardVariableElement : VisualElement
 {
     public static readonly SerializableGUID k_ReservedID = new SerializableGUID(1, 0);
 
-    public override VisualElement contentContainer => m_Content;
+    public Action<SerializableGUID> OnExpandEvent;
 
+    public Action<SerializableGUID> OnCollapseEvent;
+
+    public override VisualElement contentContainer => m_Content;
+    
     private VariableModel m_VariableModel;
+
     public VariableModel VariableModel
     {
         get => m_VariableModel;
@@ -28,6 +33,17 @@ internal class BlackboardVariableElement : VisualElement
             m_NameLabel.text = value;
             m_NameField.SetValueWithoutNotify(value);
         }
+    }
+    
+    public Texture2D IconImage
+    {
+        set => m_Icon.image = value;
+    }
+    
+    public string IconName
+    {
+        get => m_Icon.iconName;
+        set => m_Icon.iconName = value;
     }
 
     public string VariableType
@@ -44,7 +60,7 @@ internal class BlackboardVariableElement : VisualElement
     protected BlackboardView m_View;
     private VisualElement m_Content;
     private VisualElement m_InfoTitle;
-    // private VisualElement m_Icon;
+    private Icon m_Icon;
     private Label m_NameLabel;
     private Label m_VariableTypeLabel;
     private TextField m_NameField;
@@ -66,12 +82,10 @@ internal class BlackboardVariableElement : VisualElement
         m_VariableTypeLabel = this.Q<Label>("VariableType");
         m_Content = this.Q("Content");
         m_InfoTitle = this.Q("Info");
-        // m_Icon = this.Q("Icon");
+        m_Icon = this.Q<Icon>("Icon");
         m_NameField.size = Size.S;
         m_ExposedToggle = this.Q<Toggle>("ExposedToggle");
         m_SharedToggle = this.Q<Toggle>("SharedToggle");
-        
-        IsEditable = true;
         
         RegisterCallbacks();
     }
@@ -92,6 +106,11 @@ internal class BlackboardVariableElement : VisualElement
         SetSharedVariableVisualization();
     }
 
+    public BlackboardVariableElement(BlackboardView view, VariableModel variableModel, bool isEditable) : this(view, variableModel)
+    {
+        IsEditable = isEditable;
+    }
+
     private void SetupTogglesForVariable()
     {
         // Do not allow setting the Self variable to Shared.
@@ -102,13 +121,12 @@ internal class BlackboardVariableElement : VisualElement
 
         m_ExposedToggle.RegisterValueChangedCallback(evt =>
         {
-            m_VariableModel.IsExposed = evt.newValue;
             OnToggleExposeVariable();
+            m_VariableModel.IsExposed = evt.newValue;
         });
         m_SharedToggle.RegisterValueChangedCallback(evt =>
         {
             m_View.SetVariableIsShared(VariableModel, evt.newValue);
-            OnToggleSharedVariable();
             SetSharedVariableVisualization();
         });
     }
@@ -214,11 +232,6 @@ internal class BlackboardVariableElement : VisualElement
         m_View.Asset.MarkUndo(VariableModel.IsExposed ? $"Unexpose variable: {VariableModel.Name}." : $"Expose variable: {VariableModel.Name}.");
     }
 
-    private void OnToggleSharedVariable()
-    {
-        m_View.Asset.MarkUndo(VariableModel.IsShared ? $"Make variable not global: {VariableModel.Name}." : $"Make variable global: {VariableModel.Name}.");
-    }
-
     private void OnTitlePointerUp(PointerUpEvent evt)
     {
         if (evt.clickCount == 1 && evt.button == 0 && !m_TitleEditing)
@@ -239,12 +252,14 @@ internal class BlackboardVariableElement : VisualElement
     {
         RemoveFromClassList("Expanded");
         AddToClassList("Collapsed");
+        OnCollapseEvent?.Invoke(VariableModel.ID);
     }
 
     internal void Expand()
     {
         RemoveFromClassList("Collapsed");
         AddToClassList("Expanded");
+        OnExpandEvent?.Invoke(VariableModel.ID);
     }
 
     private void OnDelete()

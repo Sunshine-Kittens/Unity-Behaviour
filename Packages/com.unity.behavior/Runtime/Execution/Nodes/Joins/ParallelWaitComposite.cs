@@ -10,7 +10,7 @@ namespace Unity.Behavior
     [NodeDescription(
         name: "Wait For Any",
         category: "Flow/Parallel Execution",
-        description: "Activates its child when any parent starts this node. It cannot restart until the child's subgraph has ended.", 
+        description: "Activates its child when any parent starts this node. It cannot restart until the child's subgraph has ended.",
         icon: "Icons/parallel_any",
         id: "bf0ecb9b9f44492eb96f0442454949a1")]
     internal partial class WaitForAnyComposite : Join
@@ -29,6 +29,7 @@ namespace Unity.Behavior
                 return m_PreviousStatus;
             }
             m_LastFrameTimestamp = currentFrame;
+            m_PreviousStatus = Status.Waiting;
             if (Child == null)
             {
                 return Status.Success;
@@ -56,19 +57,17 @@ namespace Unity.Behavior
         /// <inheritdoc cref="OnEnd" />
         protected override void OnEnd()
         {
-            m_PreviousStatus = CurrentStatus;
-            m_StartCount--;
-            if (m_StartCount == 0 && !HasCompletedParent())
-            {
-                base.OnEnd();
-            }
+            m_PreviousStatus = Child?.CurrentStatus ?? Status.Success;
+            m_StartCount = 0;
+            base.OnEnd();
         }
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             var currentFrame = UnityEngine.Time.unscaledTimeAsDouble;
-            if (CurrentStatus != Status.Uninitialized && m_StartCount == 0 && !HasCompletedParent()  && currentFrame != m_LastFrameTimestamp)
+            bool isChildRunning = Child != null && Child.IsRunning;
+            if (!isChildRunning && CurrentStatus != Status.Uninitialized && m_StartCount == 0 && !HasCompletedParent()  && currentFrame != m_LastFrameTimestamp)
             {
                 m_PreviousStatus = Status.Uninitialized;
                 base.ResetStatus();
@@ -87,7 +86,7 @@ namespace Unity.Behavior
             return false;
         }
     }
-    
+
     /// <summary>
     /// Activates its child when all parents have started this node. It cannot restart until the child's subgraph has ended.
     /// </summary>
@@ -95,11 +94,12 @@ namespace Unity.Behavior
     [NodeDescription(
         name: "Wait For All",
         category: "Flow/Parallel Execution",
-        description: "Activates its child when all parents have started this node. It cannot restart until the child's subgraph has ended.", 
+        description: "Activates its child when all parents have started this node. It cannot restart until the child's subgraph has ended.",
         icon: "Icons/parallel_all",
         id: "848efe0dcb174f6aa79c7bfac31028fe")]
     public partial class WaitForAllComposite : Join
     {
+        [CreateProperty]
         int m_StartCount;
 
         /// <inheritdoc cref="OnStart" />
@@ -107,14 +107,14 @@ namespace Unity.Behavior
         {
             m_StartCount++;
             if (m_StartCount < Parents.Count)
-            {            
+            {
                 return Status.Running;
             }
             if (Child == null)
             {
                 return Status.Success;
             }
-            
+
             Status childStatus = StartNode(Child);
             if (childStatus is Status.Success or Status.Failure)
             {
@@ -134,7 +134,7 @@ namespace Unity.Behavior
             {
                 return Status.Success;
             }
-            
+
             Status childStatus = Child.CurrentStatus;
             if (childStatus is Status.Success or Status.Failure)
             {
@@ -151,7 +151,7 @@ namespace Unity.Behavior
         }
 
         /// <inheritdoc cref="ResetStatus" />
-        public override void ResetStatus()
+        protected internal override void ResetStatus()
         {
             // Do not reset the status if the node is already running.
             if (CurrentStatus != Status.Uninitialized && m_StartCount == 0)

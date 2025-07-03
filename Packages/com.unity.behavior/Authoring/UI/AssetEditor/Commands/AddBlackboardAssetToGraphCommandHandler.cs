@@ -1,5 +1,4 @@
 using Unity.Behavior.GraphFramework;
-using UnityEngine;
 
 namespace Unity.Behavior
 {
@@ -16,6 +15,7 @@ namespace Unity.Behavior
             {
                 BehaviorBlackboardAuthoringAsset assetReference = command.blackboardAuthoringAsset;
                 command.GraphAsset.m_Blackboards.Add(assetReference);
+                graphBlackboardView.RequestBlackboardReferenceAssetsViewRefresh();
                 graphBlackboardView.InitializeListView();
             }
 
