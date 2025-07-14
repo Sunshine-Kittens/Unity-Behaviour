@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class Port : VisualElement
+    public class Port : VisualElement
     {
         private static readonly CustomStyleProperty<string> s_PortStyleProperty = new ("--port-style");
         private static readonly CustomStyleProperty<string> s_PortOrientationProperty = new ("--port-orientation");

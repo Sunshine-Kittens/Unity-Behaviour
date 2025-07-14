@@ -10,7 +10,7 @@ namespace Unity.Behavior.GraphFramework
 #if ENABLE_UXML_UI_SERIALIZATION
     [UxmlElement("Blackboard")]
 #endif
-    internal partial class BlackboardView : VisualElement
+    public partial class BlackboardView : VisualElement
     {
 #if !ENABLE_UXML_UI_SERIALIZATION
         internal new class UxmlFactory : UxmlFactory<BlackboardView, UxmlTraits>

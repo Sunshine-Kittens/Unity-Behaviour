@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class GraphElement : VisualElement
+    public class GraphElement : VisualElement
     {
         public GraphElement()
         {

@@ -7,7 +7,7 @@ using ContextMenu = Unity.Behavior.GraphFramework.ContextMenu;
 using TextField = Unity.AppUI.UI.TextField;
 using Toggle = Unity.AppUI.UI.Toggle;
 
-internal class BlackboardVariableElement : VisualElement
+public class BlackboardVariableElement : VisualElement
 {
     public static readonly SerializableGUID k_ReservedID = new SerializableGUID(1, 0);
 

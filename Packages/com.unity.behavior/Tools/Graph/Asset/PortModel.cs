@@ -52,7 +52,7 @@ namespace Unity.Behavior.GraphFramework
     };
 
     [Serializable]
-    internal class PortModel
+    public class PortModel
     {
         public const string k_InputPortName = "InputPort";
         public const string k_OutputPortName = "OutputPort";

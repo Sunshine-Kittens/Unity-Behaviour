@@ -2,7 +2,7 @@ using UnityEngine.UIElements;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal interface IDispatcherContext
+    public interface IDispatcherContext
     {
         public BlackboardView BlackboardView { get; }
         public GraphEditor GraphEditor { get; }

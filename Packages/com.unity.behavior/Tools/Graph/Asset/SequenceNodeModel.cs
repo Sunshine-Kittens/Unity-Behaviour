@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class SequenceNodeModel : NodeModel
+    public class SequenceNodeModel : NodeModel
     {
         [SerializeReference]
         public List<NodeModel> Nodes = new List<NodeModel>();

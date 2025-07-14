@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class Dispatcher
+    public class Dispatcher
     {
         private readonly Dictionary<Type, List<BaseCommandHandler>> m_CommandTypeToHandlers = new();
         private readonly Queue<Command> m_DispatchQueue = new();

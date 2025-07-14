@@ -17,7 +17,7 @@ using Vector4Field = Unity.AppUI.UI.Vector4Field;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class TypedVariableElement<T, FieldType> : BlackboardVariableElement where FieldType : VisualElement, new()
+    public class TypedVariableElement<T, FieldType> : BlackboardVariableElement where FieldType : VisualElement, new()
     {
         protected FieldType m_Field;
 
@@ -61,7 +61,7 @@ namespace Unity.Behavior.GraphFramework
         }
     }
 
-    internal class TypedListVariableElement<ValueType, BaseValueType> : TypedVariableElement<ValueType, ListView> where ValueType : BaseValueType
+    public class TypedListVariableElement<ValueType, BaseValueType> : TypedVariableElement<ValueType, ListView> where ValueType : BaseValueType
     {
         protected TypedListVariableElement(BlackboardView view, VariableModel variableModel, bool isEditable, Type fieldType) : base(view, variableModel, isEditable)
         {
@@ -185,7 +185,7 @@ namespace Unity.Behavior.GraphFramework
             field.size = Size.M;
         }
     }
-
+    
     [VariableUI(typeof(TypedVariableModel<List<float>>))]
     internal class FloatListVariableElement : TypedListVariableElement<float, float>
     {

@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class GraphAsset : ScriptableObject
+    public class GraphAsset : ScriptableObject
     {
         [SerializeReference] 
         public BlackboardAsset Blackboard;
