@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class NodeRegistry
+    public class NodeRegistry
     {
         static NodeRegistry m_Instance;
         static NodeRegistry Instance => m_Instance ??= new NodeRegistry();

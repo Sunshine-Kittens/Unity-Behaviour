@@ -1,6 +1,12 @@
 using System;
+using System.Collections.Generic;
+using Unity.Behavior.GraphFramework;
 using UnityEngine.UIElements;
 using TextField = Unity.AppUI.UI.TextField;
+using System.Collections.Generic;
+using Unity.Behavior.GraphFramework;
+using UnityEditor;
+
 
 [Serializable]
 public struct DialogueAnswer
@@ -9,6 +15,33 @@ public struct DialogueAnswer
     public string Message;
 }
 
+
+[VariableUI(typeof(TypedVariableModel<List<DialogueAnswer>>))]
+internal sealed class DialogueAnswerListVariableElement
+    : TypedListVariableElement<DialogueAnswer, DialogueAnswer>   // <TValue , TBase>
+{
+    public DialogueAnswerListVariableElement(
+            BlackboardView view,
+            VariableModel  variableModel,
+            bool           isEditable)
+        : base(view, variableModel, isEditable, typeof(DialogueAnswerField))
+    { }
+}
+
+
+#if UNITY_EDITOR
+
+[InitializeOnLoad]
+internal static class DialogueAnswerVariableUIBootstrap
+{
+    static DialogueAnswerVariableUIBootstrap()
+    {
+        NodeRegistry.RegisterVariableModelUI(
+            typeof(TypedVariableModel<List<DialogueAnswer>>),
+            typeof(DialogueAnswerListVariableElement));
+    }
+}
+#endif
 
 internal sealed class DialogueAnswerField : VisualElement, INotifyValueChanged<DialogueAnswer>
 {
