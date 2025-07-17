@@ -97,16 +97,54 @@ namespace Unity.Behavior
             return enumOptions;
         }
 
+        public static List<BlackboardOption> GetStructVariableTypes()
+        {
+            bool IsStruct(Type type)
+            {
+                return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
+            }
+
+            var structOptions = new List<BlackboardOption>();
+#if UNITY_EDITOR
+            var structTypes = UnityEditor.TypeCache.GetTypesWithAttribute<BlackboardStructAttribute>()
+                .Where(type => IsStruct(type));
+            foreach (var type in structTypes)
+            {
+                structOptions.Add(new BlackboardOption(type, "Structs/" + Util.NicifyVariableName(type.Name), icon: "enum"));
+                Type listType = typeof(List<>).MakeGenericType(type);
+                structOptions.Add(new BlackboardOption(listType, "List/" + Util.NicifyVariableName(type.Name) + " List", icon: "enum"));
+            }
+#else
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    // we don't consider non struct derrived types
+                    if (!IsStruct(type) || type.GetCustomAttribute<BlackboardStructAttribute>() == null)
+                    {
+                        continue;
+                    }
+                    structOptions.Add(new BlackboardOption(type, "Structs/" + Util.NicifyVariableName(type.Name)));
+                    Type listType = typeof(List<>).MakeGenericType(type);
+                    structOptions.Add(new BlackboardOption(listType, "List/" + Util.NicifyVariableName(type.Name) + " List", icon: "enum"));
+                }
+            }
+#endif
+            return structOptions;
+        }
+
         public static List<BlackboardOption> GetStoryVariableTypes()
         {
             var options = GetDefaultBlackboardOptions();
             var enums = GetEnumVariableTypes();
+            var structs = GetStructVariableTypes();
             options.Insert(0, new BlackboardOption { Type = typeof(RegularText) , Path = "Regular Text" });
 
             AddCustomTypes<Behaviour>(options, "Other/MonoBehaviours");
             AddCustomTypes<ScriptableObject>(options, "Other/ScriptableObjects");
 
             options.AddRange(enums);
+            options.AddRange(structs);
 
             return options;
         }

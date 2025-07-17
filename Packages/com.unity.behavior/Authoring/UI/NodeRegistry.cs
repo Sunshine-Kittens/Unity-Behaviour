@@ -350,11 +350,18 @@ namespace Unity.Behavior
                 bool isPrimitive = type.IsPrimitive;
                 bool isEnum = type.IsEnum;
                 bool isStatic = Util.GetSupportedTypes().Contains(type);
-                    
+                bool isStaticList = false;
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    Type listType = type.GetGenericArguments()[0];
+                    isStaticList = Util.GetSupportedListTypes().Contains(listType);
+                }                
+
                 if (!isObject && 
                     !isPrimitive &&
                     !isEnum &&
-                    !isStatic)
+                    !isStatic && 
+                    !isStaticList)
                 {
                     invalidType = type;
                     allArgumentsValid = false; 
