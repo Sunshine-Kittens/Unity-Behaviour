@@ -33,19 +33,23 @@ namespace Unity.Behavior
             typeof(Vector4),
             typeof(Vector2Int),
             typeof(Vector3Int),
-            typeof(Color),
-            typeof(List<int>),
-            typeof(List<float>),
-            typeof(List<double>),
-            typeof(List<bool>),
-            typeof(List<string>),
-            typeof(List<GameObject>),
-            typeof(List<Vector2>),
-            typeof(List<Vector3>),
-            typeof(List<Vector4>),
-            typeof(List<Vector2Int>),
-            typeof(List<Vector3Int>),
-            typeof(List<Color>)
+            typeof(Color)
+        };
+
+        private static readonly List<Type> s_StaticallySupportedListTypes = new()
+        {
+            typeof(GameObject),
+            typeof(string),
+            typeof(int),
+            typeof(float),
+            typeof(double),
+            typeof(bool),
+            typeof(Vector2),
+            typeof(Vector3),
+            typeof(Vector4),
+            typeof(Vector2Int),
+            typeof(Vector3Int),
+            typeof(Color)
         };
 
         // Todo: Check if we're using the correct icon here. Also this should be moved to a global UI Utils class later.
@@ -54,8 +58,17 @@ namespace Unity.Behavior
             return ResourceLoadAPI.Load<Texture2D>("Packages/com.unity.behavior/Editor/Icons/GraphAssetDark@2x.png");
         }
 
-        public static IEnumerable<Type> GetSupportedTypes() =>
-            s_StaticallySupportedTypes.Concat(GetEnumVariableTypes());
+        public static IEnumerable<Type> GetSupportedTypes()
+        {
+            IEnumerable<Type> supportedTypes = s_StaticallySupportedTypes.Concat(GetEnumVariableTypes()).Concat(GetStructVariableTypes());
+            return supportedTypes;
+        }
+
+        public static IEnumerable<Type> GetSupportedListTypes()
+        {
+            IEnumerable<Type> supportedTypes = s_StaticallySupportedListTypes.Concat(GetStructVariableTypes());
+            return supportedTypes;
+        }
 
         private static bool IsCapitalCharacter(char character)
         {
@@ -150,6 +163,14 @@ namespace Unity.Behavior
         {
             Dictionary<string, Type> variables = new Dictionary<string, Type>();
             List<Type> supportedTypes = GetSupportedTypes().ToList();
+
+            IEnumerable<Type> supportedListTypes = GetSupportedListTypes();
+            foreach (Type type in supportedListTypes)
+            {
+                Type listType = typeof(List<>).MakeGenericType(type);
+                supportedTypes.Add(listType);
+            }            
+
             foreach (VariableModel variableModel in asset.Blackboard.Variables.Where(variableModel => supportedTypes.Contains(variableModel.Type)))
             {
                 variables[variableModel.Name.ToLower()] = variableModel.Type;
@@ -274,6 +295,33 @@ namespace Unity.Behavior
 #endif
         }
 
+        public static IEnumerable<Type> GetStructVariableTypes()
+        {
+            bool IsStruct(Type type)
+            {
+                return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
+            }
+
+#if UNITY_EDITOR
+            return UnityEditor.TypeCache.GetTypesWithAttribute<BlackboardStructAttribute>()
+                .Where(type => IsStruct(type));
+#else
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    // we don't consider non struct derrived types
+                    if (!IsStruct(type) || type.GetCustomAttribute<BlackboardStructAttribute>() == null)
+                    {
+                        continue;
+                    }
+
+                    yield return type;
+                }
+            }
+#endif
+        }
+
         public static SearchMenuBuilder CreateBlackboardOptions(Dispatcher dispatcher, VisualElement referenceView, SerializableCommandBuffer buffer)
         {
             SearchMenuBuilder builder = new SearchMenuBuilder();
@@ -312,6 +360,21 @@ namespace Unity.Behavior
             {
                 builder.Add($"Enumeration/{enumType.Name}", iconName: "enum", onSelected: () => 
                     dispatcher.DispatchImmediate(new CreateVariableCommand(enumType.Name, BlackboardUtils.GetVariableModelTypeForType(enumType)), setHasOutstandingChanges: false));
+            }
+
+            // Structs menu
+            builder.Add("Structs", iconName: "enum");
+#if UNITY_EDITOR
+            builder.Add($"Structs/Create new struct type...", onSelected: () => OnCreateNewStruct(referenceView, buffer), priority: 1);
+#endif
+            foreach (Type structType in GetStructVariableTypes())
+            {
+                builder.Add($"Structs/{structType.Name}", iconName: "enum", onSelected: () =>
+                    dispatcher.DispatchImmediate(new CreateVariableCommand(structType.Name, BlackboardUtils.GetVariableModelTypeForType(structType)), setHasOutstandingChanges: false));
+
+                Type listType = typeof(List<>).MakeGenericType(structType);
+                builder.Add($"List/{structType.Name} List", iconName: "enum", onSelected: () =>
+                    dispatcher.DispatchImmediate(new CreateVariableCommand(listType.Name, BlackboardUtils.GetVariableModelTypeForType(listType)), setHasOutstandingChanges: false));
             }
 
             // Event channels menu
@@ -383,7 +446,28 @@ namespace Unity.Behavior
             modal.Show();
 #endif
         }
-        
+
+        private static void OnCreateNewStruct(VisualElement target, SerializableCommandBuffer buffer)
+        {
+#if UNITY_EDITOR
+            WizardStepper stepper = new WizardStepper();
+            Modal modal = Modal.Build(target, stepper);
+            stepper.WizardAppBar.title = "New Struct Type";
+            stepper.CloseButton.clicked += modal.Dismiss;
+            StructWizard wizard = new StructWizard(modal, stepper);
+            wizard.OnStructTypeCreated += structClassName =>
+            {
+                buffer.SerializeDeferredCommand(new CreateVariableFromSerializedTypeCommand(structClassName, true));
+            };
+            modal.shown += (_) =>
+            {
+                wizard.OnShow();
+            };
+            stepper.Add(wizard);
+            modal.Show();
+#endif
+        }
+
         public static void UpdateLinkFieldBlackboardPrefixes(BaseLinkField linkField)
         {
             if (linkField.Model != null && linkField.Model.Asset != null)

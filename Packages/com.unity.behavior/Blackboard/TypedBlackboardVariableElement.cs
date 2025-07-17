@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Unity.AppUI.UI;
+
 using UnityEngine;
 using UnityEngine.UIElements;
+
 using DoubleField = Unity.AppUI.UI.DoubleField;
 using FloatField = Unity.AppUI.UI.FloatField;
 using IntegerField = Unity.AppUI.UI.IntField;
@@ -17,7 +20,7 @@ using Vector4Field = Unity.AppUI.UI.Vector4Field;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class TypedVariableElement<T, FieldType> : BlackboardVariableElement where FieldType : VisualElement, new()
+    public class TypedVariableElement<T, FieldType> : BlackboardVariableElement where FieldType : VisualElement, new()
     {
         protected FieldType m_Field;
 
@@ -61,7 +64,7 @@ namespace Unity.Behavior.GraphFramework
         }
     }
 
-    internal class TypedListVariableElement<ValueType, BaseValueType> : TypedVariableElement<ValueType, ListView> where ValueType : BaseValueType
+    public class TypedListVariableElement<ValueType, BaseValueType> : TypedVariableElement<ValueType, ListView> where ValueType : BaseValueType
     {
         protected TypedListVariableElement(BlackboardView view, VariableModel variableModel, bool isEditable, Type fieldType) : base(view, variableModel, isEditable)
         {
@@ -146,7 +149,14 @@ namespace Unity.Behavior.GraphFramework
                 }
 
                 Add(m_Label);
-                Add(Field as VisualElement);
+                VisualElement fieldVisualElement = Field as VisualElement;
+                Add(fieldVisualElement);
+
+                // #ListVariableListViewItem enforces style as 22px which can no longer be assumed
+                if (fieldVisualElement != null)
+                {
+                    style.height = fieldVisualElement.resolvedStyle.height;
+                }
             }
 
             public void Init(int index, ValueType value)
@@ -185,7 +195,7 @@ namespace Unity.Behavior.GraphFramework
             field.size = Size.M;
         }
     }
-
+    
     [VariableUI(typeof(TypedVariableModel<List<float>>))]
     internal class FloatListVariableElement : TypedListVariableElement<float, float>
     {

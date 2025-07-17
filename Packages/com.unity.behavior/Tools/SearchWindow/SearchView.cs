@@ -7,7 +7,7 @@ using Unity.Behavior.GraphFramework;
 
 namespace UnityEngine.UIExtras
 {
-    internal class SearchView : VisualElement
+    public class SearchView : VisualElement
     {
         private const string k_Title = "Root";
         private string m_Title = k_Title;

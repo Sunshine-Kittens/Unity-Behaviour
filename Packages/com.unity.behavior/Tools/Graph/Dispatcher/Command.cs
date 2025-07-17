@@ -3,7 +3,7 @@ using System;
 namespace Unity.Behavior.GraphFramework
 {
     [Serializable]
-    internal abstract class Command
+    public abstract class Command
     {
         public bool MarkUndo { get; }
         public bool SetAssetDirty { get; protected set; } = true;

@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 namespace Unity.Behavior.GraphFramework
 {
     [UxmlElement]
-    internal partial class GraphEditor : VisualElement, IDispatcherContext
+    public partial class GraphEditor : VisualElement, IDispatcherContext
     {
 #if UNITY_EDITOR
         private const string k_PlaymodeEditWarning = "You are modifying the Behavior Graph during Play mode.\n" +

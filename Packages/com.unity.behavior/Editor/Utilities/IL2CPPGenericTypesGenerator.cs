@@ -76,6 +76,14 @@ namespace Unity.Behavior
             builder.AppendLine();
             Regex rgx = new Regex("[^a-zA-Z0-9]");
             List<Type> types = Util.GetSupportedTypes().ToList();
+
+            IEnumerable<Type> listTypes = Util.GetSupportedListTypes();
+            foreach (Type type in listTypes)
+            {
+                Type listType = typeof(List<>).MakeGenericType(type);
+                types.Add(listType);
+            }
+
             foreach (Type variableType in types.Where(type => type.IsVisible))
             {
                 string realTypeName = GetRealTypeName(variableType);
@@ -124,10 +132,11 @@ namespace Unity.Behavior
             IEnumerable<Type> nodeModelTypes = TypeCache.GetTypesDerivedFrom<NodeModel>();
             IEnumerable<Type> runtimeNodeTypes = TypeCache.GetTypesDerivedFrom<Node>(); 
             IEnumerable<Type> enumTypes = TypeCache.GetTypesWithAttribute<BlackboardEnumAttribute>();
+            IEnumerable<Type> structTypes = TypeCache.GetTypesWithAttribute<BlackboardStructAttribute>();
             IEnumerable<Type> eventChannelTypes =
                 TypeCache.GetTypesWithAttribute<EventChannelDescriptionAttribute>();
             
-            IEnumerable<Type> allTypes = nodeModelTypes.Concat(runtimeNodeTypes).Concat(enumTypes).Concat(eventChannelTypes);
+            IEnumerable<Type> allTypes = nodeModelTypes.Concat(runtimeNodeTypes).Concat(enumTypes).Concat(structTypes).Concat(eventChannelTypes);
             bool IsNotPackageAssembly(string assemblyName) => !assemblyName.StartsWith(k_GraphAssembly) && !assemblyName.StartsWith(k_BehaviorAssembly);
             return allTypes.Where(type => IsNotPackageAssembly(type.Assembly.GetName().FullName));
         }

@@ -8,7 +8,7 @@ namespace Unity.Behavior.GraphFramework
 #if ENABLE_UXML_UI_SERIALIZATION
     [UxmlElement("Inspector")]
 #endif
-    internal partial class InspectorView : VisualElement
+    public partial class InspectorView : VisualElement
     {
         private GraphEditor m_GraphEditor;
         public GraphEditor GraphEditor

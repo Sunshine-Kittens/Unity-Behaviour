@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class BlackboardAsset : ScriptableObject
+    public class BlackboardAsset : ScriptableObject
     {
         [HideInInspector]
         [SerializeField]

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Unity.Behavior.GraphFramework
 {
     [Serializable]
-    internal class NodeModel : BaseModel
+    public class NodeModel : BaseModel
     {
         [SerializeField]
         public Vector2 Position;

@@ -1,6 +1,6 @@
 namespace Unity.Behavior.GraphFramework
 {
-    internal abstract class BaseCommandHandler
+    public abstract class BaseCommandHandler
     {
         protected internal IDispatcherContext DispatcherContext { get; internal set; }
         protected GraphView GraphView => DispatcherContext.GraphView;
@@ -11,7 +11,7 @@ namespace Unity.Behavior.GraphFramework
         public abstract bool Process(Command command);
     }
 
-    internal abstract class CommandHandler<CommandType> : BaseCommandHandler where CommandType : Command
+    public abstract class CommandHandler<CommandType> : BaseCommandHandler where CommandType : Command
     {
         public sealed override bool Process(Command command)
         {

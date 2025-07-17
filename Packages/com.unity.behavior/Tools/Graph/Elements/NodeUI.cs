@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class NodeUI : GraphElement
+    public class NodeUI : GraphElement
     {
         public override VisualElement contentContainer { get; }
         private NodeModel m_NodeModel;

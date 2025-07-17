@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class Edge : GraphElement
+    public class Edge : GraphElement
     {
         static readonly CustomStyleProperty<float> s_EdgeThicknessPropery = new CustomStyleProperty<float>("--edge-thickness");
         public bool IsDebugHighlighted

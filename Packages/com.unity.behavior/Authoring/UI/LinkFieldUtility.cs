@@ -62,7 +62,7 @@ namespace Unity.Behavior
             {
                 return new BaseLinkField();
             }
-            
+
             if (typeof(BlackboardVariable).IsAssignableFrom(type))
             {
                 type = type.GetProperty("Value").PropertyType;
@@ -88,6 +88,10 @@ namespace Unity.Behavior
             {
                 Type enumFieldType = typeof(EnumLinkField<>).MakeGenericType(type);
                 return Activator.CreateInstance(enumFieldType) as BaseLinkField;
+            }
+            if (IsStruct(type))
+            {
+                return CreateFieldForStructType(type, label);
             }
             if (type == typeof(Vector2))
             {
@@ -151,14 +155,19 @@ namespace Unity.Behavior
                 field.AllowAssetEmbeds = true;
                 return field;
             }
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) 
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
             {
                 Type listType = type.GetGenericArguments()[0];
                 return CreateFieldForListType(listType, label);
             }
-            
+
 #endif
             return null;
+        }
+
+        private static bool IsStruct(Type type)
+        {
+            return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
         }
 
         [Preserve]
@@ -170,10 +179,27 @@ namespace Unity.Behavior
             listField.label = Util.NicifyVariableName(label).Replace("  ", " ");
             return field;
         }
-        
+
         private static BaseLinkField CreateFieldForListType(Type itemType, string label)
         {
-            MethodInfo method = typeof(LinkFieldUtility).GetMethod(nameof(CreateFieldForListTypeGeneric), 
+            MethodInfo method = typeof(LinkFieldUtility).GetMethod(nameof(CreateFieldForListTypeGeneric),
+                BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo specialized = method.MakeGenericMethod(itemType);
+            return specialized.Invoke(null, new object[] { label }) as BaseLinkField;
+        }
+
+        [Preserve]
+        private static StructLinkField<T> CreateFieldForStructTypeGeneric<T>(string label)
+        {
+            StructLinkField<T> field = new StructLinkField<T>();
+            RuntimeStructField<T> listField = field.Field;
+            listField.label = Util.NicifyVariableName(label).Replace("  ", " ");
+            return field;
+        }
+
+        private static BaseLinkField CreateFieldForStructType(Type itemType, string label)
+        {
+            MethodInfo method = typeof(LinkFieldUtility).GetMethod(nameof(CreateFieldForStructTypeGeneric),
                 BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
             MethodInfo specialized = method.MakeGenericMethod(itemType);
             return specialized.Invoke(null, new object[] { label }) as BaseLinkField;

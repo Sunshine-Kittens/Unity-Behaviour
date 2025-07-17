@@ -11,7 +11,7 @@ namespace Unity.Behavior.GraphFramework
 #if ENABLE_UXML_UI_SERIALIZATION
     [UxmlElement]
 #endif
-    internal partial class GraphView : VisualElement
+    public partial class GraphView : VisualElement
     {
 #if !ENABLE_UXML_UI_SERIALIZATION
         internal new class UxmlFactory : UxmlFactory<GraphView, UxmlTraits> {}
@@ -223,7 +223,7 @@ namespace Unity.Behavior.GraphFramework
     }
 
     // A class to hold data for the state of the view.
-    internal class GraphViewState
+    public class GraphViewState
     {
         internal GraphView GraphView { get; private set; }
         internal GraphAsset Asset;

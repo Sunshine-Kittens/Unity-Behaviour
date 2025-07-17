@@ -6,7 +6,7 @@ using UnityEngine.UIExtras;
 
 namespace Unity.Behavior.GraphFramework
 {
-    internal class SearchMenuBuilder
+    public class SearchMenuBuilder
     {
         public delegate void OnOptionSelected();
 
@@ -97,7 +97,7 @@ namespace Unity.Behavior.GraphFramework
         }
     }
 
-    internal class SearchMenuBuilderGeneric<Params> : SearchMenuBuilder
+    public class SearchMenuBuilderGeneric<Params> : SearchMenuBuilder
     {
         public delegate void OnOptionSelectedWithParams(Params @params);
 
